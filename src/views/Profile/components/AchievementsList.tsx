@@ -92,8 +92,8 @@ const AchievementsList = () => {
         </Button>
       </ButtonContainer>
       <ButtonContainer>
-        <Button variant="danger" onClick={() => addFakeAchivements()}>
-          addAchivements (broken)
+        <Button variant="success" onClick={() => addFakeAchivements()}>
+          addAchivements (works now)
         </Button>
       </ButtonContainer>
       <ButtonContainer>
