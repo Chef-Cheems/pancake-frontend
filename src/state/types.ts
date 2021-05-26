@@ -340,6 +340,33 @@ export interface VotingState {
   }
 }
 
+export interface LotteryRound {
+  status: LotteryStatus | string
+  startTime: string
+  endTime: string
+  priceTicketInCake: SerializedBigNumber
+  discountDivisor: string
+  treasuryFee: string
+  firstTicketId: string
+  lastTicketId: string
+  amountCollectedInCake: SerializedBigNumber
+  finalNumber: string
+}
+
+export interface LotteryState {
+  loading?: boolean
+  currentLotteryId: string
+  maxNumberTicketsPerBuy: string
+  currentRound: LotteryRound
+}
+
+export enum LotteryStatus {
+  PENDING = 'pending',
+  OPEN = 'open',
+  CLOSE = 'close',
+  CLAIMABLE = 'claimable',
+}
+
 // Global state
 
 export interface State {
@@ -352,4 +379,5 @@ export interface State {
   teams: TeamsState
   collectibles: CollectiblesState
   voting: VotingState
+  lottery: LotteryState
 }
