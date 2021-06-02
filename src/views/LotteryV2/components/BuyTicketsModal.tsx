@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import BigNumber from 'bignumber.js'
+import { ethers } from 'ethers'
 import { Modal, Text, Flex, HelpIcon, Button, BalanceInput, Ticket, useTooltip, Skeleton } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useWeb3React } from '@web3-react/core'
@@ -146,41 +147,24 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
         try {
           const response = await cakeContract.methods.allowance(account, lotteryContract.options.address).call()
           const currentAllowance = new BigNumber(response)
-          return currentAllowance.gte(0)
+          return currentAllowance.gt(0)
         } catch (error) {
           return false
         }
       },
       onApprove: () => {
-        return cakeContract.methods.approve(lotteryContract.options.address).send({ from: account })
+        return cakeContract.methods
+          .approve(lotteryContract.options.address, ethers.constants.MaxUint256)
+          .send({ from: account })
       },
       onConfirm: () => {
-        return null
+        const ticketNumArray = generateTicketNumbers(parseInt(ticketsToBuy, 10))
+        return lotteryContract.methods.buyTickets(currentLotteryId, ticketNumArray).send({ from: account })
       },
       onSuccess: async () => {
         onDismiss()
       },
     })
-
-  const handleBuyTickets = async () => {
-    const ticketNumArray = generateTicketNumbers(parseInt(ticketsToBuy, 10))
-    try {
-      lotteryContract.methods
-        .buyTickets(currentLotteryId, ticketNumArray)
-        .send({ from: account })
-        .on('sending', () => {
-          console.log('sending')
-        })
-        .on('receipt', () => {
-          console.log('bought')
-        })
-        .on('error', (error) => {
-          console.error(error)
-        })
-    } catch (e) {
-      console.error(e)
-    }
-  }
 
   return (
     <>
