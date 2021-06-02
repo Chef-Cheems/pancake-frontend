@@ -4,9 +4,12 @@ import { Flex, Heading } from '@pancakeswap/uikit'
 import PageSection from 'components/PageSection'
 import { useTranslation } from 'contexts/Localization'
 import useTheme from 'hooks/useTheme'
-import { useFetchLottery } from 'state/hooks'
+import { useFetchLottery, useLottery } from 'state/hooks'
 import { TITLE_BG, GET_TICKETS_BG, FINISHED_ROUNDS_BG, FINISHED_ROUNDS_BG_DARK } from './pageSectionStyles'
 import Hero from './components/Hero'
+import DrawInfoCard from './components/DrawInfoCard'
+import Countdown from './components/Countdown'
+import { getNextLotteryEvent } from './helpers'
 
 const LotteryPage = styled.div`
   min-height: calc(100vh - 64px);
@@ -23,6 +26,7 @@ const LotteryV2 = () => {
   const { t } = useTranslation()
   const { isDark, theme } = useTheme()
   useFetchLottery()
+  const { currentRound } = useLottery()
 
   return (
     <LotteryPage>
@@ -34,6 +38,8 @@ const LotteryV2 = () => {
           <Heading scale="xl" color="#ffffff">
             {t('Get your tickets now!')}
           </Heading>
+          <Countdown nextEventTimestamp={getNextLotteryEvent(currentRound)} />
+          <DrawInfoCard />
         </Flex>
       </TicketsSection>
       <PageSection
