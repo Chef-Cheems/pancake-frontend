@@ -67,6 +67,7 @@ const ContributeModal: React.FC<Props> = ({
           .approve(contract.options.address, ethers.constants.MaxUint256)
           .send({ from: account, gasPrice })
       },
+
       onConfirm: () => {
         return contract.methods
           .depositPool(valueWithTokenDecimals.toString(), poolId === PoolIds.poolBasic ? 0 : 1)
