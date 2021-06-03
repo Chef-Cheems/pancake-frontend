@@ -164,6 +164,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
       },
       onConfirm: () => {
         const ticketNumArray = generateTicketNumbers(parseInt(ticketsToBuy, 10))
+        console.log(account)
         return lotteryContract.methods.buyTickets(currentLotteryId, ticketNumArray).send({ from: account })
       },
       onSuccess: async () => {

@@ -38,8 +38,8 @@ const LotteryV2 = () => {
           <Heading scale="xl" color="#ffffff">
             {t('Get your tickets now!')}
           </Heading>
-          <Countdown nextEventTimestamp={getNextLotteryEvent(currentRound)} />
-          <DrawInfoCard />
+          {/* <Countdown nextEventTimestamp={getNextLotteryEvent(currentRound)} />
+          <DrawInfoCard /> */}
         </Flex>
       </TicketsSection>
       <PageSection
