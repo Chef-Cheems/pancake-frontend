@@ -30,7 +30,7 @@ import { getCanClaim } from './predictions/helpers'
 import { transformPool } from './pools/helpers'
 import { fetchPoolsStakingLimitsAsync } from './pools'
 import { fetchFarmUserDataAsync, nonArchivedFarms } from './farms'
-import { fetchPublicLotteryData, fetchLotteryById } from './lottery'
+import { fetchPublicLotteryData, fetchLotteryById, fetchUserTickets } from './lottery'
 
 export const usePollFarmsData = (includeArchive = false) => {
   const dispatch = useAppDispatch()
@@ -475,19 +475,28 @@ export const useGetCollectibles = () => {
 
 // Lottery
 export const useFetchLottery = () => {
+  const { account } = useWeb3React()
   const { fastRefresh } = useRefresh()
   const dispatch = useAppDispatch()
-  const lotteryId = useGetCurrentLotteryId()
+  const currentLotteryId = useGetCurrentLotteryId()
 
   useEffect(() => {
     dispatch(fetchPublicLotteryData())
   }, [dispatch])
 
+  // get user data for current lottery
   useEffect(() => {
-    if (lotteryId) {
-      dispatch(fetchLotteryById({ lotteryId }))
+    if (account && currentLotteryId) {
+      dispatch(fetchUserTickets({ account, lotteryId: currentLotteryId }))
     }
-  }, [dispatch, lotteryId, fastRefresh])
+  }, [dispatch, currentLotteryId, account])
+
+  // get public data for current lottery
+  useEffect(() => {
+    if (currentLotteryId) {
+      dispatch(fetchLotteryById({ lotteryId: currentLotteryId }))
+    }
+  }, [dispatch, currentLotteryId, fastRefresh, account])
 }
 
 export const useGetCurrentLotteryId = () => {
@@ -510,6 +519,7 @@ export const useLottery = () => {
     lastTicketId,
     amountCollectedInCake: amountCollectedInCakeAsString,
     finalNumber,
+    userData,
   } = currentRound
 
   const maxNumberTicketsPerBuy = useMemo(() => {
@@ -538,6 +548,7 @@ export const useLottery = () => {
       lastTicketId,
       amountCollectedInCake,
       finalNumber,
+      userData,
     },
   }
 }

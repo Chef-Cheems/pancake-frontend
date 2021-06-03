@@ -251,6 +251,16 @@ export interface PredictionsState {
   bets: BetData
 }
 
+export interface LotteryTicket {
+  id: number
+  number: number
+  status: boolean
+}
+
+export interface LotteryRoundUserData {
+  tickets?: LotteryTicket[]
+}
+
 export interface LotteryRound {
   status: LotteryStatus
   startTime: string
@@ -263,6 +273,7 @@ export interface LotteryRound {
   lastTicketId: string
   amountCollectedInCake: SerializedBigNumber | BigNumber
   finalNumber: string
+  userData?: LotteryRoundUserData
 }
 
 export interface LotteryState {

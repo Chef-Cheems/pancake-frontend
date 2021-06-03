@@ -13,11 +13,14 @@ const DrawInfoCard = () => {
     currentLotteryId,
     currentRound: { endTime, amountCollectedInCake },
   } = useLottery()
+
   // TODO: Re-enebale in prod
   //   const cakePriceBusd = usePriceCakeBusd()
   const cakePriceBusd = new BigNumber(20.55)
   const prizeInBusd = amountCollectedInCake.times(cakePriceBusd)
   const endDate = new Date(parseInt(endTime, 10) * 1000)
+
+  const userTickets = 0
 
   return (
     <Card>
@@ -57,6 +60,22 @@ const DrawInfoCard = () => {
             ) : (
               <Skeleton my="2px" height={14} width={90} />
             )}
+          </Flex>
+        </Flex>
+        <Flex>
+          <Heading>{t('Your tickets')}</Heading>
+          <Flex flexDirection="column">
+            <Flex>
+              <Text display="inline">{t('You have')} </Text>
+              {userTickets ? (
+                <Text display="inline" bold>
+                  {userTickets} {t('tickets')}
+                </Text>
+              ) : (
+                <Skeleton mx="4px" height={20} width={40} />
+              )}
+              <Text display="inline"> {t('this round')}</Text>
+            </Flex>
           </Flex>
         </Flex>
       </CardBody>
