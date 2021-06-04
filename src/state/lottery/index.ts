@@ -131,7 +131,7 @@ export const fetchPublicLotteryData = createAsyncThunk<PublicLotteryData>('lotte
 export const fetchUserTickets = createAsyncThunk<any, { account: string; lotteryId: string }>(
   'lottery/fetchUserTickets',
   async ({ account, lotteryId }) => {
-    const cursor = 1
+    const cursor = 0
     const userTickets = await fetchTickets(account, lotteryId, cursor)
     return userTickets
   },
