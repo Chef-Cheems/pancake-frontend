@@ -1,18 +1,22 @@
 import React from 'react'
 import styled from 'styled-components'
-import { Card, CardHeader, CardBody, Flex, Heading, Text, Skeleton } from '@pancakeswap/uikit'
+import { Card, CardHeader, CardBody, Flex, Heading, Text, Skeleton, Button, useModal } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { useLottery, usePriceCakeBusd } from 'state/hooks'
 import { getBalanceNumber, getFullDisplayBalance } from 'utils/formatBalance'
 import Balance from 'components/Balance'
+import BuyTicketsModal from './BuyTicketsModal'
+import ViewTicketsModal from './ViewTicketsModal'
 
 const DrawInfoCard = () => {
   const { t } = useTranslation()
   const {
     currentLotteryId,
-    currentRound: { endTime, amountCollectedInCake },
+    currentRound: { endTime, amountCollectedInCake, userData },
   } = useLottery()
+  const [onPresentBuyTicketsModal] = useModal(<BuyTicketsModal />)
+  const [onPresentViewTicketsModal] = useModal(<ViewTicketsModal roundId={currentLotteryId} />)
 
   // TODO: Re-enebale in prod
   //   const cakePriceBusd = usePriceCakeBusd()
@@ -20,7 +24,7 @@ const DrawInfoCard = () => {
   const prizeInBusd = amountCollectedInCake.times(cakePriceBusd)
   const endDate = new Date(parseInt(endTime, 10) * 1000)
 
-  const userTickets = 0
+  const userTicketCount = userData?.tickets?.length || 0
 
   return (
     <Card>
@@ -63,20 +67,33 @@ const DrawInfoCard = () => {
           </Flex>
         </Flex>
         <Flex>
-          <Heading>{t('Your tickets')}</Heading>
+          <Heading mr="32px">{t('Your tickets')}</Heading>
           <Flex flexDirection="column">
             <Flex>
               <Text display="inline">{t('You have')} </Text>
-              {userTickets ? (
-                <Text display="inline" bold>
-                  {userTickets} {t('tickets')}
+              {!userData.isLoading ? (
+                <Text display="inline" bold mx="4px">
+                  {userTicketCount} {t('tickets')}
                 </Text>
               ) : (
                 <Skeleton mx="4px" height={20} width={40} />
               )}
               <Text display="inline"> {t('this round')}</Text>
             </Flex>
+            {!userData.isLoading && userTicketCount > 0 && (
+              <Button
+                onClick={onPresentViewTicketsModal}
+                height="auto"
+                width="fit-content"
+                p="0"
+                variant="text"
+                scale="sm"
+              >
+                {t('View your tickets')}
+              </Button>
+            )}
           </Flex>
+          <Button onClick={onPresentBuyTicketsModal}>{t('Buy Tickets')}</Button>
         </Flex>
       </CardBody>
 

@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js'
-import { CampaignType, FarmConfig, Nft, PoolConfig, Team } from 'config/constants/types'
+import { CampaignType, FarmConfig, Nft, PoolConfig, Team, LotteryTicket } from 'config/constants/types'
 
 export type TranslatableText =
   | string
@@ -251,14 +251,9 @@ export interface PredictionsState {
   bets: BetData
 }
 
-export interface LotteryTicket {
-  id: number
-  number: number
-  status: boolean
-}
-
 export interface LotteryRoundUserData {
   tickets?: LotteryTicket[]
+  isLoading: boolean
 }
 
 export interface LotteryRound {

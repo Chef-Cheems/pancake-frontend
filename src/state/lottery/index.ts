@@ -25,6 +25,7 @@ const initialState: LotteryState = {
     amountCollectedInCake: '',
     finalNumber: '',
     userData: {
+      isLoading: true,
       tickets: [],
     },
   },
@@ -153,6 +154,7 @@ export const LotterySlice = createSlice({
       state.maxNumberTicketsPerBuy = action.payload.maxNumberTicketsPerBuy
     })
     builder.addCase(fetchUserTickets.fulfilled, (state, action: PayloadAction<any>) => {
+      state.currentRound.userData.isLoading = false
       state.currentRound.userData.tickets = action.payload
     })
   },
