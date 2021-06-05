@@ -21,6 +21,7 @@ interface EarningsCellProps {
 
 const StyledCell = styled(BaseCell)`
   flex: 4.5;
+  background-color: yellow;
   ${({ theme }) => theme.mediaQueries.sm} {
     flex: 1 0 120px;
   }
@@ -107,7 +108,11 @@ const EarningsCell: React.FC<EarningsCellProps> = ({ pool, account, userDataLoad
           <>
             {tooltipVisible && tooltip}
             <Flex>
-              <Box mr="8px" height="32px" onClick={!isAutoVault && hasEarnings ? handleEarningsClick : undefined}>
+              <Box
+                mr={[null, '8px']}
+                height="32px"
+                onClick={!isAutoVault && hasEarnings ? handleEarningsClick : undefined}
+              >
                 <Balance
                   mt="4px"
                   bold={!isXs && !isSm}

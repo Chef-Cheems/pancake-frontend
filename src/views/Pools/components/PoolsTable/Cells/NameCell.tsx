@@ -14,12 +14,18 @@ interface NameCellProps {
 
 const StyledCell = styled(BaseCell)`
   flex: 5;
+  flex-basis: 56px;
   flex-direction: row;
   padding-left: 12px;
   ${({ theme }) => theme.mediaQueries.sm} {
     flex: 1 0 150px;
     padding-left: 32px;
   }
+`
+
+const PoolImage = styled(Image)`
+  background-color: red;
+  min-width: 30px;
 `
 
 const NameCell: React.FC<NameCellProps> = ({ pool }) => {
@@ -55,14 +61,14 @@ const NameCell: React.FC<NameCellProps> = ({ pool }) => {
 
   return (
     <StyledCell role="cell">
-      <Image src={`/images/pools/${iconFile}`} alt="icon" width={40} height={40} mr="8px" />
+      <PoolImage src={`/images/pools/${iconFile}`} alt="icon" width={30} height={30} mr="8px" />
       <CellContent>
         {showStakedTag && (
           <Text fontSize="12px" bold color={isFinished ? 'failure' : 'secondary'} textTransform="uppercase">
             {t('Staked')}
           </Text>
         )}
-        <Text bold={!isXs && !isSm} small={isXs || isSm}>
+        <Text style={{ overflowWrap: 'anywhere' }} bold={!isXs && !isSm} small={isXs || isSm}>
           {title}
         </Text>
         {showSubtitle && (
