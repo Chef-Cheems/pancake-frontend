@@ -263,6 +263,7 @@ export interface LotteryRoundUserData {
 }
 
 export interface LotteryRound {
+  isLoading?: boolean
   status: LotteryStatus
   startTime: string
   endTime: string
@@ -278,7 +279,6 @@ export interface LotteryRound {
 }
 
 export interface LotteryState {
-  loading?: boolean
   currentLotteryId: string
   maxNumberTicketsPerBuy: string
   currentRound: LotteryRound
