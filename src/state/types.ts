@@ -365,6 +365,8 @@ export interface LotteryState {
   currentLotteryId: string
   maxNumberTicketsPerBuy: string
   currentRound: LotteryRound
+  pastLotteries?: PastLotteryRound[]
+  userLotteryHistory?: UserLotteryHistory
 }
 
 export enum LotteryStatus {
@@ -372,6 +374,32 @@ export enum LotteryStatus {
   OPEN = 'open',
   CLOSE = 'close',
   CLAIMABLE = 'claimable',
+}
+
+export interface PastLotteryRound {
+  id: string
+  totalUsers: string
+  totalTickets: string
+  status: LotteryStatus
+  winningNumbers: string
+  winningTickets: string
+  startTime: string
+  endTime: string
+  ticketPrice: SerializedBigNumber
+  firstTicket: string
+  lastTicket: string
+}
+
+export interface UserLotteryHistory {
+  totalCake: string
+  totalTickets: string
+  pastRounds: PastUserRound[]
+}
+
+export interface PastUserRound {
+  claimed: boolean
+  lotteryId: string
+  totalTickets: string
 }
 
 // Global state
