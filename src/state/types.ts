@@ -1,7 +1,7 @@
 import { ThunkAction } from 'redux-thunk'
 import { AnyAction } from '@reduxjs/toolkit'
 import BigNumber from 'bignumber.js'
-import { CampaignType, FarmConfig, Nft, PoolConfig, Team, LotteryTicket } from 'config/constants/types'
+import { CampaignType, FarmConfig, Nft, PoolConfig, Team, LotteryTicket, LotteryStatus } from 'config/constants/types'
 
 export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, State, unknown, AnyAction>
 
@@ -275,6 +275,9 @@ export interface LotteryRound {
   lastTicketId: string
   amountCollectedInCake: SerializedBigNumber | BigNumber
   finalNumber: string
+  cakePerBracket: string[]
+  countWinnersPerBracket: string[]
+  rewardsBreakdown: string[]
   userData?: LotteryRoundUserData
 }
 
@@ -286,19 +289,12 @@ export interface LotteryState {
   userLotteryHistory?: UserLotteryHistory
 }
 
-export enum LotteryStatus {
-  PENDING = 'pending',
-  OPEN = 'open',
-  CLOSE = 'close',
-  CLAIMABLE = 'claimable',
-}
-
 export interface PastLotteryRound {
   id: string
   totalUsers: string
   totalTickets: string
   status: LotteryStatus
-  winningNumbers: string
+  finalNumber: string
   winningTickets: string
   startTime: string
   endTime: string
