@@ -1,3 +1,5 @@
 export const GRAPH_API_PROFILE = process.env.REACT_APP_GRAPH_API_PROFILE
 export const GRAPH_API_PREDICTION = process.env.REACT_APP_GRAPH_API_PREDICTION
 export const ARCHIVED_NODE = process.env.REACT_APP_ARCHIVED_NODE
+export const STREAMING_FAST = process.env.REACT_APP_STREAMING_FAST
+export const BLOCK_SUBGRAPH = process.env.REACT_APP_BLOCK_SUBGRAPH

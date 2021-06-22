@@ -8,6 +8,7 @@ import FlexLayout from 'components/layout/Flex'
 import Page from 'components/layout/Page'
 import { useFarms, usePollFarmsData, usePriceCakeBusd } from 'state/hooks'
 import usePersistState from 'hooks/usePersistState'
+import useFarmVolumes from 'hooks/useFarmVolumes'
 import { Farm } from 'state/types'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
@@ -128,6 +129,9 @@ const Farms: React.FC = () => {
   const activeFarms = farmsLP.filter((farm) => farm.pid !== 0 && farm.multiplier !== '0X' && !isArchivedPid(farm.pid))
   const inactiveFarms = farmsLP.filter((farm) => farm.pid !== 0 && farm.multiplier === '0X' && !isArchivedPid(farm.pid))
   const archivedFarms = farmsLP.filter((farm) => isArchivedPid(farm.pid))
+
+  console.log('ACTIVE FARMS', activeFarms.length)
+  useFarmVolumes(activeFarms)
 
   const stakedOnlyFarms = activeFarms.filter(
     (farm) => farm.userData && new BigNumber(farm.userData.stakedBalance).isGreaterThan(0),
