@@ -258,9 +258,9 @@ export interface PredictionsState {
   bets: BetData
 }
 
-export interface LotteryRoundUserData {
+export interface LotteryRoundUserTickets {
+  isLoading?: boolean
   tickets?: LotteryTicket[]
-  isLoading: boolean
 }
 
 export interface LotteryRound {
@@ -279,18 +279,18 @@ export interface LotteryRound {
   cakePerBracket: string[]
   countWinnersPerBracket: string[]
   rewardsBreakdown: string[]
-  userData?: LotteryRoundUserData
+  userTickets?: LotteryRoundUserTickets
 }
 
 export interface LotteryState {
   currentLotteryId: string
   maxNumberTicketsPerBuyOrClaim: string
   currentRound: LotteryRound
-  pastLotteries?: PastLotteryRound[]
-  userLotteryData?: UserLotteryData
+  lotteriesData?: LotteryRoundGraphEntity[]
+  userLotteryData?: LotteryUserGraphEntity
 }
 
-export interface PastLotteryRound {
+export interface LotteryRoundGraphEntity {
   id: string
   totalUsers: string
   totalTickets: string
@@ -304,7 +304,7 @@ export interface PastLotteryRound {
   lastTicket: string
 }
 
-export interface UserLotteryData {
+export interface LotteryUserGraphEntity {
   account: string
   totalCake: string
   totalTickets: string

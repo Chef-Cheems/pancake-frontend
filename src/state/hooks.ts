@@ -484,12 +484,12 @@ export const useGetCurrentLotteryId = () => {
   return useSelector((state: State) => state.lottery.currentLotteryId)
 }
 
-export const useGetUserLotteryData = () => {
+export const useGetUserLotteriesGraphData = () => {
   return useSelector((state: State) => state.lottery.userLotteryData)
 }
 
-export const useGetPastLotteries = () => {
-  return useSelector((state: State) => state.lottery.pastLotteries)
+export const useGetLotteriesGraphData = () => {
+  return useSelector((state: State) => state.lottery.lotteriesData)
 }
 
 export const useFetchLottery = () => {
@@ -525,8 +525,8 @@ export const useLottery = () => {
   const maxNumberTicketsPerBuyOrClaimAsString = useSelector(
     (state: State) => state.lottery.maxNumberTicketsPerBuyOrClaim,
   )
-  const userLotteryData = useGetUserLotteryData()
-  const pastLotteries = useGetPastLotteries()
+  const userLotteryData = useGetUserLotteriesGraphData()
+  const lotteriesData = useGetLotteriesGraphData()
 
   const {
     isLoading,
@@ -540,7 +540,7 @@ export const useLottery = () => {
     lastTicketId,
     amountCollectedInCake: amountCollectedInCakeAsString,
     finalNumber,
-    userData,
+    userTickets,
     cakePerBracket,
     countWinnersPerBracket,
     rewardsBreakdown,
@@ -566,7 +566,7 @@ export const useLottery = () => {
     currentLotteryId,
     maxNumberTicketsPerBuyOrClaim,
     userLotteryData,
-    pastLotteries,
+    lotteriesData,
     currentRound: {
       isLoading,
       status,
@@ -579,7 +579,7 @@ export const useLottery = () => {
       lastTicketId,
       amountCollectedInCake,
       finalNumber,
-      userData,
+      userTickets,
       cakePerBracket,
       countWinnersPerBracket,
       rewardsBreakdown,
