@@ -23,6 +23,7 @@ import HistoryTabMenu from './components/HistoryTabMenu'
 import YourHistoryCard from './components/YourHistoryCard'
 import AllHistoryCard from './components/AllHistoryCard'
 import CheckPrizes from './components/CheckPrizes'
+import HowToPlay from './components/HowToPlay'
 
 const LotteryPage = styled.div`
   min-height: calc(100vh - 64px);
@@ -83,7 +84,8 @@ const LotteryV2 = () => {
       </PageSection>
       <PageSection
         background={isDark ? FINISHED_ROUNDS_BG_DARK : FINISHED_ROUNDS_BG}
-        hasCurvedDivider={false}
+        hasCurvedDivider
+        concaveDivider
         index={1}
         containerProps={{ style: { margin: '0' } }}
       >
@@ -101,10 +103,8 @@ const LotteryV2 = () => {
         </Flex>
       </PageSection>
 
-      <PageSection hasCurvedDivider={false} index={0}>
-        <Flex>
-          <img src="/images/lottery/tombola.png" alt="tombola bunny" height="auto" width="240px" />
-        </Flex>
+      <PageSection hasCurvedDivider={false} index={1}>
+        <HowToPlay />
       </PageSection>
     </LotteryPage>
   )
