@@ -27,10 +27,8 @@ const ClaimInnerContainer: React.FC<ClaimInnerProps> = ({ onSuccess, roundsToCla
   const { toastSuccess, toastError } = useToast()
   const [activeClaimIndex, setActiveClaimIndex] = useState(0)
   const [pendingTx, setPendingTx] = useState(false)
-  // TODO: Re-enebale in prod
-  //   const cakePriceBusd = usePriceCakeBusd()
+  const cakePriceBusd = usePriceCakeBusd()
   const lotteryContract = useLotteryV2Contract()
-  const cakePriceBusd = new BigNumber(20)
 
   const activeClaimData = roundsToClaim[activeClaimIndex]
 

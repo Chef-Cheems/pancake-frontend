@@ -22,9 +22,7 @@ const RewardsMatch: React.FC<RewardsMatchProps> = ({
   isBurn,
 }) => {
   const { t } = useTranslation()
-  //   TODO: Reeneable in prod
-  //    const cakePriceBusd = usePriceCakeBusd()
-  const cakePriceBusd = new BigNumber(20)
+  const cakePriceBusd = usePriceCakeBusd()
   const prizeInBusd = cakeAmount.times(cakePriceBusd)
 
   const getRewardText = () => {
