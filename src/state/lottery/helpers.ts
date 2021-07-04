@@ -134,7 +134,7 @@ export const getViewUserTicketInfoCalls = (totalTicketsToRequest: number, accoun
   for (let i = 0; i < totalTicketsToRequest; i += perRequestLimit) {
     cursor = i
     calls.push({
-      name: 'viewUserTicketNumbersAndStatusesForLottery',
+      name: 'viewUserInfoForLotteryId',
       address: getLotteryV2Address(),
       params: [account, lotteryId, cursor, perRequestLimit],
     })
