@@ -1017,5 +1017,6 @@
   "Buying multiple tickets in a single transaction gives a discount. The discount increases in a linear way, up to the maximum of 100 tickets:": "Buying multiple tickets in a single transaction gives a discount. The discount increases in a linear way, up to the maximum of 100 tickets:",
   "2 tickets: 0.05%": "2 tickets: 0.05%",
   "50 tickets: 2.51%": "50 tickets: 2.51%",
-  "100 tickets: 5.21%": "100 tickets: 5.21%"
+  "100 tickets: 5.21%": "100 tickets: 5.21%",
+  "You pay": "You pay"
 }
