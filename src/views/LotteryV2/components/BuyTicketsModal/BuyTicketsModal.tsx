@@ -336,8 +336,7 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
         <Flex mb="8px" justifyContent="space-between">
           <Flex>
             <Text display="inline" bold fontSize="14px" mr="4px">
-              {discountValue && totalCost ? percentageDiscount() : 0}
-              {t('%')}
+              {discountValue && totalCost ? percentageDiscount() : 0}%
             </Text>
             <Text display="inline" color="textSubtle" fontSize="14px">
               {t('Bulk discount')}
