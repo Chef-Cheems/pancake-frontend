@@ -162,18 +162,18 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
     // Force input to integer
     const inputAsInt = parseInt(input, 10)
     const inputAsBN = new BigNumber(inputAsInt)
-    const parsedNum = limitNumberByMaxTicketsPerBuy(inputAsBN)
-    const cakeValueOfInput = getCakeValueOfTickets(parsedNum)
+    const limitedNumberTickets = limitNumberByMaxTicketsPerBuy(inputAsBN)
+    const cakeValueOfInput = getCakeValueOfTickets(limitedNumberTickets)
 
     if (cakeValueOfInput.gt(userCake)) {
       setUserNotEnoughCake(true)
-    } else if (parsedNum.eq(maxPossibleTicketPurchase)) {
+    } else if (limitedNumberTickets.eq(maxPossibleTicketPurchase)) {
       setMaxTicketPurchaseExceeded(true)
     } else {
       setUserNotEnoughCake(false)
       setMaxTicketPurchaseExceeded(false)
     }
-    setTicketsToBuy(inputAsInt ? parsedNum.toString() : '0')
+    setTicketsToBuy(inputAsInt ? limitedNumberTickets.toString() : '0')
   }
 
   const handleNumberButtonClick = (number: number) => {
