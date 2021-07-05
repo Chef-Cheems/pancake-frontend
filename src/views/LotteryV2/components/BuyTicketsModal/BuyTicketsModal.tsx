@@ -185,8 +185,10 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
       onApproveSuccess: async () => {
         toastSuccess(t('Contract approved - you can now purchase tickets'))
       },
+      // @ts-ignore
       onConfirm: () => {
         const ticketsForPurchase = getTicketsForPurchase()
+        console.log('About to buy these', ticketsForPurchase)
         return lotteryContract.buyTickets(currentLotteryId, ticketsForPurchase)
       },
       onSuccess: async () => {
