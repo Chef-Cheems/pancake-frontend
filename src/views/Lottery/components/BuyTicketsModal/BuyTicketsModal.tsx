@@ -246,6 +246,8 @@ const BuyTicketsModal: React.FC<BuyTicketsModalProps> = ({ onDismiss }) => {
       },
       onConfirm: () => {
         const ticketsForPurchase = getTicketsForPurchase()
+        console.log('About to buy those', ticketsForPurchase)
+        // return null
         return lotteryContract.buyTickets(currentLotteryId, ticketsForPurchase)
       },
       onSuccess: async () => {
