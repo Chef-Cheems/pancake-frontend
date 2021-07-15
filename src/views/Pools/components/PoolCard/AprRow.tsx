@@ -2,19 +2,25 @@ import React from 'react'
 import { Flex, TooltipText, IconButton, useModal, CalculateIcon, Skeleton, useTooltip } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import Balance from 'components/Balance'
-import ApyCalculatorModal from 'components/ApyCalculatorModal'
+import RoiCalculatorModal from 'components/RoiCalculatorModal'
 import { Pool } from 'state/types'
 import { getAprData } from 'views/Pools/helpers'
 import { getAddress } from 'utils/addressHelpers'
+import BigNumber from 'bignumber.js'
+import { BIG_ZERO } from 'utils/bigNumber'
 
 interface AprRowProps {
   pool: Pool
+  stakedBalance: BigNumber
   performanceFee?: number
 }
 
-const AprRow: React.FC<AprRowProps> = ({ pool, performanceFee = 0 }) => {
+const AprRow: React.FC<AprRowProps> = ({ pool, stakedBalance, performanceFee = 0 }) => {
   const { t } = useTranslation()
-  const { stakingToken, earningToken, isFinished, apr, earningTokenPrice, isAutoVault } = pool
+  const { stakingToken, earningToken, isFinished, apr, earningTokenPrice, stakingTokenPrice, userData, isAutoVault } =
+    pool
+
+  const stakingTokenBalance = userData?.stakingTokenBalance ? new BigNumber(userData.stakingTokenBalance) : BIG_ZERO
 
   const tooltipContent = isAutoVault
     ? t('APY includes compounding, APR doesn’t. This pool’s CAKE is compounded automatically, so we show APY.')
@@ -22,19 +28,22 @@ const AprRow: React.FC<AprRowProps> = ({ pool, performanceFee = 0 }) => {
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(tooltipContent, { placement: 'bottom-start' })
 
-  const { apr: earningsPercentageToDisplay, roundingDecimals, compoundFrequency } = getAprData(pool, performanceFee)
+  const { apr: earningsPercentageToDisplay, roundingDecimals, autoCompoundFrequency } = getAprData(pool, performanceFee)
 
   const apyModalLink = stakingToken.address ? `/swap?outputCurrency=${getAddress(stakingToken.address)}` : '/swap'
 
   const [onPresentApyModal] = useModal(
-    <ApyCalculatorModal
-      tokenPrice={earningTokenPrice}
+    <RoiCalculatorModal
+      earningTokenPrice={earningTokenPrice}
+      stakingTokenPrice={stakingTokenPrice}
       apr={apr}
       linkLabel={t('Get %symbol%', { symbol: stakingToken.symbol })}
       linkHref={apyModalLink}
+      stakingTokenBalance={stakedBalance.plus(stakingTokenBalance)}
+      stakingTokenSymbol={stakingToken.symbol}
       earningTokenSymbol={earningToken.symbol}
       roundingDecimals={roundingDecimals}
-      compoundFrequency={compoundFrequency}
+      autoCompoundFrequency={autoCompoundFrequency}
       performanceFee={performanceFee}
     />,
   )

@@ -1,17 +1,57 @@
-import { tokenEarnedPerThousandDollarsCompounding, getRoi } from 'utils/compoundApyHelpers'
+import { getInterestBreakdown, getRoi } from 'utils/compoundApyHelpers'
+
+const TWICE_PER_DAY = 2
+const FIVE_THOUSAND_TIMES_PER_DAY = 5000
+const ONCE_PER_7_DAYS = 0.142857142
+const ONCE_PER_30_DAYS = 0.033333333
 
 it.each([
-  [{ numberOfDays: 1, farmApr: 365, tokenPrice: 1, performanceFee: 20 }, 8],
-  [{ numberOfDays: 7, farmApr: 20, tokenPrice: 0.8, performanceFee: 1 }, 4.75],
-  [{ numberOfDays: 40, farmApr: 212.21, tokenPrice: 1.2, performanceFee: 2 }, 212.63],
-  [{ numberOfDays: 330, farmApr: 45.12, tokenPrice: 5, performanceFee: 5 }, 94.6],
-  [{ numberOfDays: 365, farmApr: 100, tokenPrice: 0.2, performanceFee: 0 }, 8572.84],
-  [{ numberOfDays: 365, farmApr: 20, tokenPrice: 1, performanceFee: 0 }, 221.34],
-])('calculate cake earned with values %o', ({ numberOfDays, farmApr, tokenPrice, performanceFee }, expected) => {
-  expect(tokenEarnedPerThousandDollarsCompounding({ numberOfDays, farmApr, tokenPrice, performanceFee })).toEqual(
-    expected,
-  )
-})
+  [
+    { investmentAmount: 1000, apr: 120, earningTokenPrice: 16, performanceFee: 0, compoundFrequency: 1 },
+    [0.21, 1.45, 6.47, 144.6],
+  ],
+  [
+    { investmentAmount: 1000, apr: 120, earningTokenPrice: 16, performanceFee: 0, compoundFrequency: 2 },
+    [0.21, 1.45, 6.47, 144.8],
+  ],
+  [
+    { investmentAmount: 1000, apr: 120, earningTokenPrice: 16, performanceFee: 0, compoundFrequency: ONCE_PER_7_DAYS },
+    [0.2, 1.44, 6.4, 142.2],
+  ],
+  [
+    { investmentAmount: 1000, apr: 120, earningTokenPrice: 16, performanceFee: 0, compoundFrequency: ONCE_PER_30_DAYS },
+    [0.2, 1.39, 6.16, 133.79],
+  ],
+  [
+    { investmentAmount: 55000, apr: 120, earningTokenPrice: 5.5, performanceFee: 0, compoundFrequency: 1 },
+    [32.88, 232.42, 1034.79, 23135.88],
+  ],
+  [
+    { investmentAmount: 55000, apr: 120, earningTokenPrice: 5.5, performanceFee: 0, compoundFrequency: TWICE_PER_DAY },
+    [32.9, 232.61, 1035.69, 23168.47],
+  ],
+  [
+    { investmentAmount: 55000, apr: 120, earningTokenPrice: 5.5, performanceFee: 2, compoundFrequency: 1 },
+    [32.22, 227.73, 1013.12, 22352.61],
+  ],
+  [
+    {
+      investmentAmount: 55000,
+      apr: 120,
+      earningTokenPrice: 5.5,
+      performanceFee: 2,
+      compoundFrequency: FIVE_THOUSAND_TIMES_PER_DAY,
+    },
+    [32.27, 228.1, 1014.83, 22413.81],
+  ],
+])(
+  'calculate cake earned with values %o',
+  ({ investmentAmount, apr, earningTokenPrice, compoundFrequency, performanceFee }, expected) => {
+    expect(
+      getInterestBreakdown({ investmentAmount, apr, earningTokenPrice, compoundFrequency, performanceFee }),
+    ).toEqual(expected)
+  },
+)
 
 it.each([
   [{ amountEarned: 10, amountInvested: 1000 }, 1],

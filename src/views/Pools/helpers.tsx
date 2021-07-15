@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js'
 import { Pool } from 'state/types'
-import { getRoi, tokenEarnedPerThousandDollarsCompounding } from 'utils/compoundApyHelpers'
+import { getApy } from 'utils/compoundApyHelpers'
 import { getBalanceNumber, getFullDisplayBalance, getDecimalAmount } from 'utils/formatBalance'
 
 export const convertSharesToCake = (
@@ -31,8 +31,8 @@ export const convertCakeToShares = (
   return { sharesAsNumberBalance, sharesAsBigNumber, sharesAsDisplayBalance }
 }
 
-const AUTO_VAULT_COMPOUND_FREQUENCY = 288
-const MANUAL_POOL_COMPOUND_FREQUENCY = 1
+const AUTO_VAULT_COMPOUND_FREQUENCY = 5000
+const MANUAL_POOL_AUTO_COMPOUND_FREQUENCY = 0
 
 export const getAprData = (pool: Pool, performanceFee: number) => {
   const { isAutoVault, earningTokenPrice, apr } = pool
@@ -41,25 +41,13 @@ export const getAprData = (pool: Pool, performanceFee: number) => {
   const roundingDecimals = isHighValueToken ? 4 : 2
 
   //   Estimate & manual for now. 288 = once every 5 mins. We can change once we have a better sense of this
-  const compoundFrequency = isAutoVault ? AUTO_VAULT_COMPOUND_FREQUENCY : MANUAL_POOL_COMPOUND_FREQUENCY
+  const autoCompoundFrequency = isAutoVault ? AUTO_VAULT_COMPOUND_FREQUENCY : MANUAL_POOL_AUTO_COMPOUND_FREQUENCY
 
   if (isAutoVault) {
-    const oneThousandDollarsWorthOfToken = 1000 / earningTokenPrice
-    const tokenEarnedPerThousand365D = tokenEarnedPerThousandDollarsCompounding({
-      numberOfDays: 365,
-      farmApr: apr,
-      tokenPrice: earningTokenPrice,
-      roundingDecimals,
-      compoundFrequency,
-      performanceFee,
-    })
-    const autoApr = getRoi({
-      amountEarned: tokenEarnedPerThousand365D,
-      amountInvested: oneThousandDollarsWorthOfToken,
-    })
-    return { apr: autoApr, isHighValueToken, roundingDecimals, compoundFrequency }
+    const autoApr = getApy(apr, AUTO_VAULT_COMPOUND_FREQUENCY, 365, performanceFee)
+    return { apr: autoApr, isHighValueToken, roundingDecimals, autoCompoundFrequency }
   }
-  return { apr, isHighValueToken, roundingDecimals, compoundFrequency }
+  return { apr, isHighValueToken, roundingDecimals, autoCompoundFrequency }
 }
 
 export const getCakeVaultEarnings = (

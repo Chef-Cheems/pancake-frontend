@@ -116,7 +116,10 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
             {farm.apr ? (
               <>
                 <ApyButton
+                  pid={farm.pid}
+                  lpSymbol={farm.lpSymbol}
                   lpLabel={lpLabel}
+                  multiplier={farm.multiplier}
                   addLiquidityUrl={addLiquidityUrl}
                   cakePrice={cakePrice}
                   apr={farm.apr}
