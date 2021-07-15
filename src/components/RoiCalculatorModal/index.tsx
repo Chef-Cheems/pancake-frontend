@@ -74,6 +74,36 @@ const FullWidthButtonMenu = styled(ButtonMenu)<{ disabled?: boolean }>`
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `
 
+const RoiInputContainer = styled(Flex)`
+  position: relative;
+  & > input {
+    padding-left: 28px;
+  }
+  &:before {
+    position: absolute;
+    content: '$';
+    color: ${({ theme }) => theme.colors.textSubtle};
+    left: 16px;
+    top: 8px;
+  }
+`
+
+const InvestmentInputContainer = styled.div`
+  position: relative;
+
+  & input {
+    padding-right: 34px;
+  }
+
+  &:before {
+    position: absolute;
+    content: 'USD';
+    color: ${({ theme }) => theme.colors.textSubtle};
+    right: 16px;
+    top: 21px;
+  }
+`
+
 const BulletList = styled.ul`
   list-style-type: none;
   margin: 0;
@@ -267,17 +297,17 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
         <Flex justifyContent="space-between">
           {isEditingRoi ? (
             <>
-              <Flex>
+              <RoiInputContainer>
                 <Input
                   type="number"
                   inputMode="decimal"
                   pattern="\d*"
                   scale="sm"
                   value={expectedRoi}
-                  placeholder="$0.0"
+                  placeholder="0.0"
                   onChange={handleExpectedRoiChange}
                 />
-              </Flex>
+              </RoiInputContainer>
               <CheckmarkIcon color="primary" onClick={onExitRoiEditing} />
             </>
           ) : (
@@ -305,15 +335,17 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
           <Text color="secondary" bold fontSize="12px" textTransform="uppercase">
             {stakingTokenSymbol} {t('Token value')}
           </Text>
-          <BalanceInput
-            currencyValue={`${
-              stakingTokensAmount.gt(0) ? stakingTokensAmount.toFixed(10) : '0.0'
-            } ${stakingTokenSymbol}`}
-            innerRef={balanceInputRef}
-            placeholder="$0.0"
-            value={stakingTokenUSDValue}
-            onUserInput={handleBalanceInputChange}
-          />
+          <InvestmentInputContainer>
+            <BalanceInput
+              currencyValue={`${
+                stakingTokensAmount.gt(0) ? stakingTokensAmount.toFixed(10) : '0.0'
+              } ${stakingTokenSymbol}`}
+              innerRef={balanceInputRef}
+              placeholder="0.0"
+              value={stakingTokenUSDValue}
+              onUserInput={handleBalanceInputChange}
+            />
+          </InvestmentInputContainer>
           <Flex justifyContent="space-between" mt="8px">
             <Button scale="xs" mx="2px" p="4px 16px" variant="tertiary" onClick={() => setInvestmentUSDValue('100')}>
               $100
