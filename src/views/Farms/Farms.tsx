@@ -275,8 +275,10 @@ const Farms: React.FC = () => {
     const row: RowProps = {
       apr: {
         value: getDisplayApr(farm.apr, farm.lpRewardsApr),
+        pid: farm.pid,
         multiplier: farm.multiplier,
         lpLabel,
+        lpSymbol: farm.lpSymbol,
         tokenAddress,
         quoteTokenAddress,
         cakePrice,

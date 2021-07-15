@@ -7,6 +7,7 @@ import ConnectWalletButton from 'components/ConnectWalletButton'
 import tokens from 'config/constants/tokens'
 import { useCakeVault } from 'state/pools/hooks'
 import { Pool } from 'state/types'
+import { convertSharesToCake } from 'views/Pools/helpers'
 import AprRow from '../PoolCard/AprRow'
 import { StyledCard, StyledCardInner } from '../PoolCard/StyledCard'
 import CardFooter from '../PoolCard/CardFooter'
@@ -31,7 +32,10 @@ const CakeVaultCard: React.FC<CakeVaultProps> = ({ pool, showStakedOnly }) => {
   const {
     userData: { userShares, isLoading: isVaultUserDataLoading },
     fees: { performanceFee },
+    pricePerFullShare,
   } = useCakeVault()
+
+  const { cakeAsBigNumber } = convertSharesToCake(userShares, pricePerFullShare)
 
   const accountHasSharesStaked = userShares && userShares.gt(0)
   const isLoading = !pool.userData || isVaultUserDataLoading
@@ -51,7 +55,7 @@ const CakeVaultCard: React.FC<CakeVaultProps> = ({ pool, showStakedOnly }) => {
           stakingToken={tokens.cake}
         />
         <StyledCardBody isLoading={isLoading}>
-          <AprRow pool={pool} performanceFee={performanceFeeAsDecimal} />
+          <AprRow pool={pool} stakedBalance={cakeAsBigNumber} performanceFee={performanceFeeAsDecimal} />
           <Box mt="24px">
             <RecentCakeProfitRow />
           </Box>
