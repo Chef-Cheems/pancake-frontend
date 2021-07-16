@@ -22,6 +22,7 @@ import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
 import { getBalanceNumber } from 'utils/formatBalance'
 import { getInterestBreakdown, getPrincipalForInterest, getApy, getRoi } from 'utils/compoundApyHelpers'
+import useActiveWeb3React from 'hooks/useActiveWeb3React'
 
 interface RoiCalculatorModalProps {
   onDismiss?: () => void
@@ -188,6 +189,7 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
   isFarm = false,
 }) => {
   const { t } = useTranslation()
+  const { account } = useActiveWeb3React()
   const [stakeDuration, setStakeDuration] = useState(3)
   const [stakingTokenUSDValue, setStakingTokenUSDValue] = useState('')
   const [compoundingFrequency, setCompoundingFrequency] = useState(1)
@@ -354,7 +356,7 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
               $1000
             </Button>
             <Button
-              disabled={stakingTokenBalance.lte(0)}
+              disabled={stakingTokenBalance.lte(0) || !account}
               scale="xs"
               mx="2px"
               p="4px 16px"
