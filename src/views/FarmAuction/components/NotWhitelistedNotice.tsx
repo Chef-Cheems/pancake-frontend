@@ -1,0 +1,30 @@
+import React from 'react'
+import { Text, Flex, Message, Box, HelpIcon } from '@pancakeswap/uikit'
+import { Auction, ConnectedBidder } from 'config/constants/types'
+import { useTranslation } from 'contexts/Localization'
+
+const NotWhitelistedNotice: React.FC<{ connectedUser: ConnectedBidder; auction: Auction }> = ({
+  connectedUser,
+  auction,
+}) => {
+  const { t } = useTranslation()
+  if ((connectedUser && connectedUser.isWhitelisted) || !auction) {
+    return null
+  }
+  return (
+    <Flex mb="24px" justifyContent="center">
+      <Message variant="warning" icon={<HelpIcon width="24px" />}>
+        <Box maxWidth="800px">
+          <Text bold>Notice</Text>
+          <Text>
+            {t(`This page is a functional page, for projects to bid for farms. 
+If you’re not a whitelisted project, you won’t be able to participate, but you can still view the auction bids in real time!
+Connect a whitelisted project wallet to participate in Auctions.`)}
+          </Text>
+        </Box>
+      </Message>
+    </Flex>
+  )
+}
+
+export default NotWhitelistedNotice

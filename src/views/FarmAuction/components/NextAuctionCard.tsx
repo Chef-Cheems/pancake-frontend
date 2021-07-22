@@ -19,7 +19,7 @@ const ScheduleInner = styled(Flex)`
   border: 1px ${({ theme }) => theme.colors.cardBorder} solid;
 `
 
-const AuctionDetail = () => {
+const CurrentAuctionCard = () => {
   const { t } = useTranslation()
 
   return (
@@ -64,4 +64,4 @@ const AuctionDetail = () => {
   )
 }
 
-export default AuctionDetail
+export default CurrentAuctionCard
