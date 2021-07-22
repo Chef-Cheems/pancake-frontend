@@ -177,3 +177,9 @@ export interface LotteryTicketClaimData {
   cakeTotal: BigNumber
   roundId: string
 }
+
+export interface FarmAuctionBidderConfig {
+  account: string
+  farmName: string
+  tokenName: string
+}

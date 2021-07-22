@@ -41,3 +41,28 @@ export type ChainLinkOracleLatestAnswerResponse = ethers.BigNumber
 export interface ChainLinkOracleContract extends Contract {
   latestAnswer: ContractFunction<ChainLinkOracleLatestAnswerResponse>
 }
+
+// Farm Auction
+
+type CurrentAuctionIdResponse = ethers.BigNumber
+
+interface AuctionsResponse {
+  status: number
+  startBlock: ethers.BigNumber
+  endBlock: ethers.BigNumber
+  initialBidAmount: ethers.BigNumber
+  topLeaderboard: number
+  leaderboardLimit: ethers.BigNumber
+}
+
+interface GetBiddersPerAuctionResponse {
+  account: string
+  amount: ethers.BigNumber
+}
+
+export interface FarmAuctionContract extends Contract {
+  currentAuctionId: ContractFunction<CurrentAuctionIdResponse>
+  auctions: ContractFunction<AuctionsResponse>
+  getBiddersPerAuction: ContractFunction<GetBiddersPerAuctionResponse[]>
+  isWhitelisted: ContractFunction<boolean>
+}

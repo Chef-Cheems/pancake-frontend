@@ -23,6 +23,7 @@ import {
   getLotteryV2Contract,
   getBunnySpecialCakeVaultContract,
   getBunnySpecialPredictionContract,
+  getFarmAuctionContract,
 } from 'utils/contractHelpers'
 
 // Imports below migrated from Exchange useContract.ts
@@ -152,6 +153,11 @@ export const useSpecialBunnyCakeVaultContract = () => {
 export const useSpecialBunnyPredictionContract = () => {
   const { library } = useActiveWeb3React()
   return useMemo(() => getBunnySpecialPredictionContract(library.getSigner()), [library])
+}
+
+export const useFarmAuctionContract = () => {
+  const { library } = useActiveWeb3React()
+  return useMemo(() => getFarmAuctionContract(library.getSigner()), [library])
 }
 
 // Code below migrated from Exchange useContract.ts
