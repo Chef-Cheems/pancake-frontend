@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react'
-import { toDate, add } from 'date-fns'
+import { toDate, add, hoursToSeconds } from 'date-fns'
 import { ethers } from 'ethers'
 import { useFarmAuctionContract } from 'hooks/useContract'
 import { FarmAuctionBidderConfig } from 'config/constants/types'
@@ -16,18 +16,22 @@ enum Status {
 
 export interface Auction {
   id: number
-  status: Status //
-  startBlock: number //
+  status: Status
+  startBlock: number
   startDate: Date
-  endBlock: number //
+  endBlock: number
   endDate: Date
-  initialBidAmount: ethers.BigNumber //
-  topLeaderboard: number //
-  leaderboardLimit: ethers.BigNumber //
+  farmStartBlock: number
+  farmStartDate: Date
+  farmEndBlock: number
+  farmEndDate: Date
+  initialBidAmount: ethers.BigNumber
+  topLeaderboard: number
+  leaderboardLimit: ethers.BigNumber
 }
 
 export interface Bidder extends FarmAuctionBidderConfig {
-  position: number
+  position: number | null
   amount: string
 }
 
@@ -38,7 +42,8 @@ export interface ConnectedUser {
 
 export const useCurrentFarmAuction = (account: string) => {
   const [currentAuction, setCurrentAuction] = useState<Auction | null>(null)
-  const [bidders, setBidders] = useState<Bidder[]>([])
+  const [bidders, setBidders] = useState<Bidder[] | null>(null)
+  const [loadingBidders, setLoadingBidders] = useState(false)
   const [connectedUser, setConnectedUser] = useState<ConnectedUser | null>(null)
 
   const farmAuctionContract = useFarmAuctionContract()
@@ -47,8 +52,8 @@ export const useCurrentFarmAuction = (account: string) => {
   useEffect(() => {
     const fetchCurrentAuction = async () => {
       try {
-        // const auctionId = await farmAuctionContract.currentAuctionId()
-        const auctionId = ethers.BigNumber.from(2)
+        const auctionId = await farmAuctionContract.currentAuctionId()
+        // const auctionId = ethers.BigNumber.from(2)
         const auctionData = await farmAuctionContract.auctions(auctionId)
 
         const processedAuctionData = {
@@ -60,7 +65,23 @@ export const useCurrentFarmAuction = (account: string) => {
         const startDate = toDate(timestamp * 1000)
         const secondsToEndBlock = (processedAuctionData.endBlock - processedAuctionData.startBlock) * BSC_BLOCK_TIME
         const endDate = add(startDate, { seconds: secondsToEndBlock })
-        setCurrentAuction({ id: auctionId.toNumber(), startDate, endDate, ...processedAuctionData })
+
+        const farmStartDate = add(endDate, { hours: 12 })
+        const blocksToFarmStartDate = hoursToSeconds(12) / BSC_BLOCK_TIME
+        const farmStartBlock = processedAuctionData.endBlock + blocksToFarmStartDate
+        const farmDurationInBlocks = hoursToSeconds(7 * 24) / BSC_BLOCK_TIME
+        const farmEndBlock = farmStartBlock + farmDurationInBlocks
+        const farmEndDate = add(farmStartDate, { weeks: 1 })
+        setCurrentAuction({
+          id: auctionId.toNumber(),
+          startDate,
+          endDate,
+          farmStartBlock,
+          farmStartDate,
+          farmEndBlock,
+          farmEndDate,
+          ...processedAuctionData,
+        })
       } catch (error) {
         console.error('Failed to fetch current auction', error)
       }
@@ -91,19 +112,21 @@ export const useCurrentFarmAuction = (account: string) => {
               ...bidderInfo,
               position: index + 1,
               account: bidder.account,
-              amount: formatBigNumberToFixed(bidder.amount, 3),
+              amount: formatBigNumberToFixed(bidder.amount, 0),
             }
           })
 
         setBidders(sortedBidders)
       } catch (error) {
         console.error('Failed to fetch bidders', error)
+      } finally {
+        setLoadingBidders(false)
       }
     }
-    if (currentAuction) {
+    if (currentAuction && !loadingBidders && !bidders) {
       fetchBidders()
     }
-  }, [currentAuction, farmAuctionContract])
+  }, [currentAuction, loadingBidders, bidders, farmAuctionContract])
 
   // Check if connected wallet is whitelisted
   useEffect(() => {
@@ -117,15 +140,30 @@ export const useCurrentFarmAuction = (account: string) => {
         console.error('Failed to check if account is whitelisted', error)
       }
     }
-    if (account) {
+    if (account && !connectedUser) {
       checkAccount()
     }
-  }, [account, farmAuctionContract])
+  }, [account, connectedUser, farmAuctionContract])
 
   // Attach bidder data to connectedUser object
   useEffect(() => {
-    if (connectedUser && connectedUser.isWhitelisted && bidders.length > 0) {
-      const bidderData = bidders.find((bidder) => bidder.account === account)
+    const getBidderData = () => {
+      if (bidders && bidders.length > 0) {
+        const bidderData = bidders.find((bidder) => bidder.account === account)
+        if (bidderData) {
+          return bidderData
+        }
+      }
+      const bidderInfo = getBidderInfo(account)
+      const defaultBidderData = {
+        position: null,
+        amount: '0',
+        ...bidderInfo,
+      }
+      return defaultBidderData
+    }
+    if (connectedUser && connectedUser.isWhitelisted && !connectedUser.bidderData) {
+      const bidderData = getBidderData()
       setConnectedUser({
         isWhitelisted: true,
         bidderData,

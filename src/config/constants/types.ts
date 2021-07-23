@@ -182,4 +182,6 @@ export interface FarmAuctionBidderConfig {
   account: string
   farmName: string
   tokenName: string
+  projectSite?: string
+  lpAddress?: string
 }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import { format } from 'date-fns'
 import {
@@ -14,9 +14,14 @@ import {
   Tag,
   Button,
   CheckmarkCircleIcon,
+  CardFooter,
+  ExpandableLabel,
+  useModal,
 } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
+import { whitelistedBidders } from 'config/constants/farmAuctions'
 import { Auction, ConnectedUser } from '../useCurrentFarmAuction'
+import PlaceBidModal from './PlaceBidModal'
 
 const AuctionDetailsCard = styled(Card)`
   flex: 1;
@@ -30,13 +35,23 @@ const ScheduleInner = styled(Flex)`
   border: 1px ${({ theme }) => theme.colors.cardBorder} solid;
 `
 
+const FooterInner = styled(Box)`
+  background-color: ${({ theme }) => theme.colors.dropdown};
+`
+
 interface AuctionDetailsProps {
   auction: Auction
   connectedUser: ConnectedUser
 }
 
+const CAKE_PER_DAY_1X_FARM = 1514
+const CAKE_PER_WEEK_1X_FARM = CAKE_PER_DAY_1X_FARM * 7
+
 const AuctionDetails: React.FC<AuctionDetailsProps> = ({ auction, connectedUser }) => {
   const { t } = useTranslation()
+  const [isExpanded, setIsExpanded] = useState(false)
+
+  const [onPresentPlaceBid] = useModal(<PlaceBidModal connectedUser={connectedUser} />)
 
   if (!auction) {
     return (
@@ -53,8 +68,20 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ auction, connectedUser 
     )
   }
 
-  const { startBlock, endBlock, startDate, endDate } = auction
+  const {
+    startBlock,
+    endBlock,
+    startDate,
+    endDate,
+    topLeaderboard,
+    farmStartBlock,
+    farmEndBlock,
+    farmStartDate,
+    farmEndDate,
+  } = auction
   const { bidderData, isWhitelisted } = connectedUser
+
+  console.log(auction.status)
 
   let bidSection = (
     <>
@@ -82,11 +109,13 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ auction, connectedUser 
           <Text color="textSubtle">Your existing bid</Text>
           <Text>{bidderData.amount} CAKE</Text>
         </Flex>
-        <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
-          <Text color="textSubtle">Your position</Text>
-          <Text>#{bidderData.position}</Text>
-        </Flex>
-        <Button my="24px" width="100%">
+        {bidderData.position && (
+          <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+            <Text color="textSubtle">Your position</Text>
+            <Text>#{bidderData.position}</Text>
+          </Flex>
+        )}
+        <Button my="24px" width="100%" onClick={onPresentPlaceBid}>
           Place bid
         </Button>
         <Text color="textSubtle" small>
@@ -128,6 +157,62 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ auction, connectedUser 
           {bidSection}
         </Flex>
       </CardBody>
+      <CardFooter p="0">
+        {isExpanded && (
+          <FooterInner>
+            <Flex p="16px" flexDirection="column">
+              <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+                <Text color="textSubtle">Farms available</Text>
+                <Text>
+                  {topLeaderboard} (top {topLeaderboard} bidders)
+                </Text>
+              </Flex>
+              <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+                <Text color="textSubtle">Weekly CAKE rewards per farm</Text>
+                <Text>{CAKE_PER_WEEK_1X_FARM.toLocaleString()}</Text>
+              </Flex>
+              <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+                <Text color="textSubtle">Multiplier per farm</Text>
+                <Text>1x</Text>
+              </Flex>
+              <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+                <Text color="textSubtle">Total whitelisted bidders</Text>
+                <Text>{whitelistedBidders.length}</Text>
+              </Flex>
+              <Flex flexDirection="column" mt="24px">
+                <Text textTransform="uppercase" color="secondary" bold fontSize="12px" mb="8px">
+                  Farm schedule
+                </Text>
+                <ScheduleInner>
+                  <Flex justifyContent="space-between" mb="8px">
+                    <Text color="textSubtle">{t('Farm duration')}</Text>
+                    <Text>7 days</Text>
+                  </Flex>
+                  <Flex justifyContent="space-between" mb="8px">
+                    <Text color="textSubtle">{t('Start')}</Text>
+                    <Box>
+                      <Text>{format(farmStartDate, 'MMMM dd yyyy hh:mm aa')}</Text>
+                      <Text textAlign="right">Block {farmStartBlock}</Text>
+                    </Box>
+                  </Flex>
+                  <Flex justifyContent="space-between">
+                    <Text color="textSubtle">{t('End')}</Text>
+                    <Box>
+                      <Text>{format(farmEndDate, 'MMMM dd yyyy hh:mm aa')}</Text>
+                      <Text textAlign="right">Block {farmEndBlock}</Text>
+                    </Box>
+                  </Flex>
+                </ScheduleInner>
+              </Flex>
+            </Flex>
+          </FooterInner>
+        )}
+        <Flex p="8px" alignItems="center" justifyContent="center">
+          <ExpandableLabel expanded={isExpanded} onClick={() => setIsExpanded((prev) => !prev)}>
+            {isExpanded ? t('Hide') : t('Details')}
+          </ExpandableLabel>
+        </Flex>
+      </CardFooter>
     </AuctionDetailsCard>
   )
 }
