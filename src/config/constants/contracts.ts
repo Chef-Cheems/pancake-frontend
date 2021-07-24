@@ -69,6 +69,6 @@ export default {
   },
   farmAuction: {
     56: '',
-    97: '0x7743C36166DbE05fB715f3DB72C770A7d4c721bC',
+    97: '0x0411CDABe741aC67b579c43bf7900E789C9eFEdf',
   },
 }

@@ -11,13 +11,18 @@ import {
   BunnyPlaceholderIcon,
   Skeleton,
   Button,
+  Spinner,
+  CardRibbon,
 } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { usePriceCakeBusd } from 'state/farms/hooks'
 import EllipsisMenu, { OptionProps } from 'components/EllipsisMenu/EllipsisMenu'
 import { getBscScanLink } from 'utils'
-import { TabToggleGroup, TabToggle } from './TabToggle'
-import { Auction, Bidder } from '../useCurrentFarmAuction'
+import { Auction, AuctionStatus, Bidder } from 'config/constants/types'
+import { TabToggleGroup, TabToggle } from '../TabToggle'
+import AuctionHistory from '../AuctionHistory'
+import AuctionProgress from './AuctionProgress'
+import AuctionRibbon from './AuctionRibbon'
 
 const AuctionLeaderboardCard = styled(Card)`
   overflow: visible;
@@ -49,6 +54,16 @@ interface AuctionLeaderboardProps {
 enum Tabs {
   Latest,
   Archive,
+}
+
+const getMostRecentClosedAuctionId = (latestAuctionId: number, latestAuctionStatus: AuctionStatus) => {
+  if (latestAuctionStatus === AuctionStatus.Close) {
+    return latestAuctionId
+  }
+  if (latestAuctionId === 0) {
+    return null
+  }
+  return latestAuctionId - 1
 }
 
 const EllipsisMenuA: React.FC<{ bidder: Bidder }> = ({ bidder }) => {
@@ -149,16 +164,13 @@ const CurrentAuctionCard: React.FC<AuctionLeaderboardProps> = ({ auction, bidder
             Archive
           </TabToggle>
         </TabToggleGroup>
-        <Text bold fontSize="20px" p="24px">
-          Auction ???
-        </Text>
-        <Flex justifyContent="center" alignItems="center" flexDirection="column">
-          <Text>Loading</Text>
+        <Flex justifyContent="center" alignItems="center" flexDirection="column" height="320px">
+          <Spinner />
         </Flex>
       </AuctionLeaderboardCard>
     )
   }
-  const { id } = auction
+  const { id, status } = auction
   const totalBidders = bidders.length
 
   return (
@@ -171,59 +183,75 @@ const CurrentAuctionCard: React.FC<AuctionLeaderboardProps> = ({ auction, bidder
           Archive
         </TabToggle>
       </TabToggleGroup>
-      <Text bold fontSize="20px" p="24px">
-        Auction #{id}
-      </Text>
-      {bidders.length > 0 ? (
-        <Box>
-          <LeaderboardContainer>
-            <Text color="secondary" bold fontSize="12px" textTransform="uppercase" pl="24px">
-              Position
-            </Text>
-            <Text color="secondary" bold fontSize="12px" textTransform="uppercase">
-              Farm
-            </Text>
-            <Text color="secondary" bold fontSize="12px" textTransform="uppercase" textAlign="right" pr="24px">
-              Total bid
-            </Text>
-            <Box />
-            {/* Rows */}
-            {bidders.slice(0, visibleBidders).map((bidder) => (
-              <LeaderboardRow
-                key={bidder.account}
-                bidder={bidder}
-                isTopPosition={bidder.position <= auction.topLeaderboard}
-                cakePriceBusd={cakePriceBusd}
-              />
-            ))}
-          </LeaderboardContainer>
-          <Flex mt="16px" flexDirection="column" justifyContent="center" alignItems="center">
-            {visibleBidders <= 10 && (
-              <Text color="textSubtle">Showing top 10 bids only. See all whitelisted bidders</Text>
-            )}
-            {visibleBidders !== totalBidders && (
-              <Button
-                mt="16px"
-                variant="text"
-                onClick={() =>
-                  setVisibleBidders((prev) => {
-                    if (totalBidders - prev > 10) {
-                      return prev + 10
+      {activeTab === Tabs.Latest ? (
+        <Box position="relative">
+          <Text bold fontSize="20px" p="24px">
+            Auction #{id}
+          </Text>
+          <AuctionRibbon auction={auction} noAuctionHistory={!!getMostRecentClosedAuctionId(id, status)} />
+          <AuctionProgress auction={auction} />
+          {bidders.length > 0 ? (
+            <Box>
+              <LeaderboardContainer>
+                <Text color="secondary" bold fontSize="12px" textTransform="uppercase" pl="24px" py="16px">
+                  Position
+                </Text>
+                <Text color="secondary" bold fontSize="12px" textTransform="uppercase" py="16px">
+                  Farm
+                </Text>
+                <Text
+                  color="secondary"
+                  bold
+                  fontSize="12px"
+                  textTransform="uppercase"
+                  textAlign="right"
+                  pr="24px"
+                  py="16px"
+                >
+                  Total bid
+                </Text>
+                <Box />
+                {/* Rows */}
+                {bidders.slice(0, visibleBidders).map((bidder) => (
+                  <LeaderboardRow
+                    key={bidder.account}
+                    bidder={bidder}
+                    isTopPosition={bidder.position <= auction.topLeaderboard}
+                    cakePriceBusd={cakePriceBusd}
+                  />
+                ))}
+              </LeaderboardContainer>
+              <Flex mt="16px" flexDirection="column" justifyContent="center" alignItems="center">
+                {visibleBidders <= 10 && totalBidders > 10 && (
+                  <Text color="textSubtle">Showing top 10 bids only. See all whitelisted bidders</Text>
+                )}
+                {visibleBidders < totalBidders && (
+                  <Button
+                    mt="16px"
+                    variant="text"
+                    onClick={() =>
+                      setVisibleBidders((prev) => {
+                        if (totalBidders - prev > 10) {
+                          return prev + 10
+                        }
+                        return totalBidders
+                      })
                     }
-                    return totalBidders
-                  })
-                }
-              >
-                Show more
-              </Button>
-            )}
-          </Flex>
+                  >
+                    Show more
+                  </Button>
+                )}
+              </Flex>
+            </Box>
+          ) : (
+            <Flex justifyContent="center" alignItems="center" flexDirection="column" my="24px">
+              <Text mb="8px">No bids yet</Text>
+              <BunnyPlaceholderIcon height="64px" width="64px" />
+            </Flex>
+          )}
         </Box>
       ) : (
-        <Flex justifyContent="center" alignItems="center" flexDirection="column" mb="24px">
-          <Text>No bids yet</Text>
-          <BunnyPlaceholderIcon height="64px" width="64px" />
-        </Flex>
+        <AuctionHistory mostRecentClosedAuctionId={getMostRecentClosedAuctionId(id, status)} />
       )}
     </AuctionLeaderboardCard>
   )

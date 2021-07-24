@@ -1,30 +1,14 @@
-import React, { useEffect, useState, useMemo, useCallback } from 'react'
+import React, { useState } from 'react'
 import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import { ethers } from 'ethers'
-import {
-  Modal,
-  Text,
-  Flex,
-  HelpIcon,
-  BalanceInput,
-  Ticket,
-  Box,
-  useTooltip,
-  Skeleton,
-  Button,
-  ArrowForwardIcon,
-  PancakeRoundIcon,
-} from '@pancakeswap/uikit'
+import { Modal, Text, Flex, BalanceInput, Box, Button, PancakeRoundIcon } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { useWeb3React } from '@web3-react/core'
 import { getBalanceAmount, getFullDisplayBalance } from 'utils/formatBalance'
 import { getCakeAddress } from 'utils/addressHelpers'
-import { BIG_ZERO, ethersToBigNumber } from 'utils/bigNumber'
-import { useAppDispatch } from 'state'
-import { usePriceCakeBusd } from 'state/farms/hooks'
-import { useLottery } from 'state/lottery/hooks'
-import { fetchUserTicketsAndLotteries } from 'state/lottery'
+import { ethersToBigNumber } from 'utils/bigNumber'
+// import { usePriceCakeBusd } from 'state/farms/hooks'
 import useTheme from 'hooks/useTheme'
 import useTokenBalance, { FetchStatus } from 'hooks/useTokenBalance'
 import useApproveConfirmTransaction from 'hooks/useApproveConfirmTransaction'
@@ -33,7 +17,7 @@ import { DEFAULT_TOKEN_DECIMAL } from 'config'
 import useToast from 'hooks/useToast'
 import UnlockButton from 'components/UnlockButton'
 import ApproveConfirmButtons, { ButtonArrangement } from 'views/Profile/components/ApproveConfirmButtons'
-import { ConnectedUser } from '../useCurrentFarmAuction'
+import { ConnectedBidder } from 'config/constants/types'
 
 const StyledModal = styled(Modal)`
   min-width: 280px;
@@ -54,10 +38,11 @@ const InnerContent = styled(Box)`
 
 interface PlaceBidModalProps {
   onDismiss?: () => void
-  connectedUser: ConnectedUser
+  connectedUser: ConnectedBidder
+  refreshBidders: () => void
 }
 
-const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser }) => {
+const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser, refreshBidders }) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
   const { theme } = useTheme()
@@ -96,10 +81,11 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser 
       },
       onConfirm: () => {
         const bidAmount = new BigNumber(bid).times(DEFAULT_TOKEN_DECIMAL).toString()
-        console.log('Confirming bid', bid)
+        console.log('Confirming bid', bidAmount)
         return farmAuctionContract.bid(bidAmount)
       },
       onSuccess: async () => {
+        refreshBidders()
         onDismiss()
         toastSuccess(t('Bid placed!'))
       },
@@ -194,7 +180,7 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser 
             <ApproveConfirmButtons
               isApproveDisabled={isApproved}
               isApproving={isApproving}
-              isConfirmDisabled={!isMultipleOfTen || getBalanceAmount(userCake).lt(bid)}
+              isConfirmDisabled={!isMultipleOfTen || getBalanceAmount(userCake).lt(bid) || isConfirmed}
               isConfirming={isConfirming}
               onApprove={handleApprove}
               onConfirm={handleConfirm}
@@ -204,7 +190,7 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser 
             <UnlockButton />
           )}
         </Flex>
-        <Text color="textSubtle" small>
+        <Text color="textSubtle" small mt="24px">
           If your bid is unsuccessful, you’ll be able to reclaim your CAKE after the auction.
         </Text>
       </InnerContent>

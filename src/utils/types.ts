@@ -46,8 +46,15 @@ export interface ChainLinkOracleContract extends Contract {
 
 type CurrentAuctionIdResponse = ethers.BigNumber
 
+// Note: slightly different from AuctionStatus used thoughout UI
+export enum FarmAuctionContractStatus {
+  Pending,
+  Open,
+  Close,
+}
+
 interface AuctionsResponse {
-  status: number
+  status: FarmAuctionContractStatus
   startBlock: ethers.BigNumber
   endBlock: ethers.BigNumber
   initialBidAmount: ethers.BigNumber
@@ -60,9 +67,19 @@ interface GetBiddersPerAuctionResponse {
   amount: ethers.BigNumber
 }
 
+type GetWhitelistedAddressesResponse = [
+  {
+    account: string
+    lpToken: string
+    token: string
+  }[],
+  ethers.BigNumber,
+]
+
 export interface FarmAuctionContract extends Contract {
   currentAuctionId: ContractFunction<CurrentAuctionIdResponse>
   auctions: ContractFunction<AuctionsResponse>
   getBiddersPerAuction: ContractFunction<GetBiddersPerAuctionResponse[]>
   isWhitelisted: ContractFunction<boolean>
+  getWhitelistedAddresses: ContractFunction<GetWhitelistedAddressesResponse>
 }

@@ -1,0 +1,74 @@
+import React, { useState } from 'react'
+import styled from 'styled-components'
+import {
+  Text,
+  Heading,
+  Card,
+  CardHeader,
+  CardBody,
+  Flex,
+  Box,
+  Spinner,
+  Skeleton,
+  Tag,
+  Button,
+  CheckmarkCircleIcon,
+  CardFooter,
+  ExpandableLabel,
+  useModal,
+} from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
+import { Auction } from 'config/constants/types'
+import { whitelistedBidders } from 'config/constants/farmAuctions'
+import { FarmSchedule } from './AuctionSchedule'
+
+const FooterInner = styled(Box)`
+  background-color: ${({ theme }) => theme.colors.dropdown};
+`
+
+const CAKE_PER_DAY_1X_FARM = 1514
+const CAKE_PER_WEEK_1X_FARM = CAKE_PER_DAY_1X_FARM * 7
+
+const AuctionFooter: React.FC<{ auction: Auction }> = ({ auction }) => {
+  const [isExpanded, setIsExpanded] = useState(false)
+  const { t } = useTranslation()
+  const { topLeaderboard } = auction
+  return (
+    <CardFooter p="0">
+      {isExpanded && (
+        <FooterInner>
+          <Flex p="16px" flexDirection="column">
+            {topLeaderboard !== 0 && (
+              <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+                <Text color="textSubtle">Farms available</Text>
+                <Text>
+                  {topLeaderboard} (top {topLeaderboard} bidders)
+                </Text>
+              </Flex>
+            )}
+            <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+              <Text color="textSubtle">Weekly CAKE rewards per farm</Text>
+              <Text>{CAKE_PER_WEEK_1X_FARM.toLocaleString()}</Text>
+            </Flex>
+            <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+              <Text color="textSubtle">Multiplier per farm</Text>
+              <Text>1x</Text>
+            </Flex>
+            <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
+              <Text color="textSubtle">Total whitelisted bidders</Text>
+              <Text>{whitelistedBidders.length}</Text>
+            </Flex>
+            <FarmSchedule auction={auction} />
+          </Flex>
+        </FooterInner>
+      )}
+      <Flex p="8px" alignItems="center" justifyContent="center">
+        <ExpandableLabel expanded={isExpanded} onClick={() => setIsExpanded((prev) => !prev)}>
+          {isExpanded ? t('Hide') : t('Details')}
+        </ExpandableLabel>
+      </Flex>
+    </CardFooter>
+  )
+}
+
+export default AuctionFooter

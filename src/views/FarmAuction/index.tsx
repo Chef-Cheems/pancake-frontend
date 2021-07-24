@@ -7,10 +7,11 @@ import PageHeader from 'components/PageHeader'
 import PageSection from 'components/PageSection'
 import useTheme from 'hooks/useTheme'
 import FAQs from './components/FAQs'
-import AuctionDetails from './components/AuctionDetail'
-import AuctionLeaderboard from './components/AuctionLeaderboard'
+import AuctionDetails from './components/AuctionDetailsCard/AuctionDetail'
+import AuctionLeaderboard from './components/AuctionLeaderboard/AuctionLeaderboard'
 import { FORM_ADDRESS } from './helpers'
 import { useCurrentFarmAuction } from './useCurrentFarmAuction'
+import AuctionTimer from './components/AuctionTimer'
 
 const StyledHeader = styled(PageHeader)`
   max-height: max-content;
@@ -66,7 +67,7 @@ const FarmAuction = () => {
   // const { toastSuccess } = useToast()
   // const cakeContract = useCake()
 
-  const { currentAuction, bidders, connectedUser } = useCurrentFarmAuction(account)
+  const { currentAuction, bidders, connectedUser, refreshBidders } = useCurrentFarmAuction(account)
 
   const FAQS_BG = 'linear-gradient(180deg, #CBD7EF 0%, #9A9FD0 100%)'
 
@@ -104,8 +105,9 @@ const FarmAuction = () => {
           concaveBackgroundLight={theme.colors.background}
           curvePosition="top"
         >
+          <AuctionTimer auction={currentAuction} />
           <Flex width="100%" alignItems="flex-start" flexDirection={['column', null, null, 'row']}>
-            <AuctionDetails auction={currentAuction} connectedUser={connectedUser} />
+            <AuctionDetails auction={currentAuction} connectedUser={connectedUser} refreshBidders={refreshBidders} />
             <AuctionLeaderboard auction={currentAuction} bidders={bidders} />
           </Flex>
         </PageSection>

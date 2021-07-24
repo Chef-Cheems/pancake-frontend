@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js'
+import { ethers } from 'ethers'
 import { SerializedBigNumber, TranslatableText } from 'state/types'
 
 export interface Address {
@@ -178,10 +179,53 @@ export interface LotteryTicketClaimData {
   roundId: string
 }
 
+// Farm Auction
 export interface FarmAuctionBidderConfig {
   account: string
   farmName: string
   tokenName: string
   projectSite?: string
   lpAddress?: string
+}
+
+// Note: this status is slightly different compared to 'status' comfing
+// from Farm Auction smart contract
+export enum AuctionStatus {
+  ToBeAnnounced, // No specific dates/blocks to display
+  Pending, // Auction is scheduled but not live yet (i.e. waiting for startBlock)
+  Open, // Auction is open for bids
+  Close, // Auction is finished, bidding is not possible
+}
+
+export interface WhitelistedAddress {
+  account: string
+  lpToken: string
+  token: string
+}
+
+export interface Auction {
+  id: number
+  status: AuctionStatus
+  startBlock: number
+  startDate: Date
+  endBlock: number
+  endDate: Date
+  farmStartBlock: number
+  farmStartDate: Date
+  farmEndBlock: number
+  farmEndDate: Date
+  initialBidAmount: ethers.BigNumber
+  topLeaderboard: number
+  leaderboardLimit: ethers.BigNumber
+}
+
+export interface Bidder extends FarmAuctionBidderConfig {
+  position: number | null
+  amount: string
+}
+
+export interface ConnectedBidder {
+  account: string
+  isWhitelisted: boolean
+  bidderData?: Bidder
 }
