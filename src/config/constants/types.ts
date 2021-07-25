@@ -194,7 +194,8 @@ export enum AuctionStatus {
   ToBeAnnounced, // No specific dates/blocks to display
   Pending, // Auction is scheduled but not live yet (i.e. waiting for startBlock)
   Open, // Auction is open for bids
-  Close, // Auction is finished, bidding is not possible
+  Finished, // Auction end block is reached, bidding is not possible
+  Closed, // Auction was closed in smart contract
 }
 
 export interface WhitelistedAddress {
@@ -210,6 +211,7 @@ export interface Auction {
   startDate: Date
   endBlock: number
   endDate: Date
+  auctionDuration: number
   farmStartBlock: number
   farmStartDate: Date
   farmEndBlock: number

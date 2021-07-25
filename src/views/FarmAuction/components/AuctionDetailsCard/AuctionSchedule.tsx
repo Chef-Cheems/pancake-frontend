@@ -18,8 +18,10 @@ interface ScheduleProps {
 }
 
 export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
-  const { startBlock, endBlock, startDate, endDate, status } = auction
+  const { startBlock, endBlock, auctionDuration, startDate, endDate, status } = auction
   const { t } = useTranslation()
+
+  const noLiveOrPendingAuction = status === AuctionStatus.ToBeAnnounced || status === AuctionStatus.Closed
 
   return (
     <>
@@ -27,15 +29,15 @@ export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
         {t('Auction Schedule')}
       </Text>
       <ScheduleInner>
-        {status !== AuctionStatus.ToBeAnnounced && (
+        {!noLiveOrPendingAuction && (
           <Flex justifyContent="space-between" mb="8px">
             <Text color="textSubtle">{t('Auction duration')}</Text>
-            <Text>{t('%numHours% hours', { numHours: '~24' })}</Text>
+            <Text>{t('%numHours% hours', { numHours: `~${auctionDuration.toString()}` })}</Text>
           </Flex>
         )}
         <Flex justifyContent="space-between" mb="8px">
           <Text color="textSubtle">{t('Start')}</Text>
-          {status === AuctionStatus.ToBeAnnounced ? (
+          {noLiveOrPendingAuction ? (
             <Text>{t('To be announced')}</Text>
           ) : (
             <Box>
@@ -46,7 +48,7 @@ export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text color="textSubtle">{t('End')}</Text>
-          {status === AuctionStatus.ToBeAnnounced ? (
+          {noLiveOrPendingAuction ? (
             <Text>{t('To be announced')}</Text>
           ) : (
             <Box>
@@ -63,6 +65,9 @@ export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
 export const FarmSchedule: React.FC<ScheduleProps> = ({ auction }) => {
   const { status, farmStartBlock, farmEndBlock, farmStartDate, farmEndDate } = auction
   const { t } = useTranslation()
+
+  const noLiveOrPendingAuction = status === AuctionStatus.ToBeAnnounced || status === AuctionStatus.Closed
+
   return (
     <Flex flexDirection="column" mt="24px">
       <Text textTransform="uppercase" color="secondary" bold fontSize="12px" mb="8px">
@@ -75,7 +80,7 @@ export const FarmSchedule: React.FC<ScheduleProps> = ({ auction }) => {
         </Flex>
         <Flex justifyContent="space-between" mb="8px">
           <Text color="textSubtle">{t('Start')}</Text>
-          {status === AuctionStatus.ToBeAnnounced ? (
+          {noLiveOrPendingAuction ? (
             <Text>{t('To be announced')}</Text>
           ) : (
             <Box>
@@ -86,7 +91,7 @@ export const FarmSchedule: React.FC<ScheduleProps> = ({ auction }) => {
         </Flex>
         <Flex justifyContent="space-between">
           <Text color="textSubtle">{t('End')}</Text>
-          {status === AuctionStatus.ToBeAnnounced ? (
+          {noLiveOrPendingAuction ? (
             <Text>{t('To be announced')}</Text>
           ) : (
             <Box>

@@ -18,7 +18,7 @@ import {
   useModal,
 } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
-import { Auction } from 'config/constants/types'
+import { Auction, AuctionStatus } from 'config/constants/types'
 import { whitelistedBidders } from 'config/constants/farmAuctions'
 import { FarmSchedule } from './AuctionSchedule'
 
@@ -32,13 +32,16 @@ const CAKE_PER_WEEK_1X_FARM = CAKE_PER_DAY_1X_FARM * 7
 const AuctionFooter: React.FC<{ auction: Auction }> = ({ auction }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { t } = useTranslation()
-  const { topLeaderboard } = auction
+  const { topLeaderboard, status } = auction
+
+  const isLiveOrPendingAuction = status === AuctionStatus.Pending || status === AuctionStatus.Open
+
   return (
     <CardFooter p="0">
       {isExpanded && (
         <FooterInner>
           <Flex p="16px" flexDirection="column">
-            {topLeaderboard !== 0 && (
+            {isLiveOrPendingAuction && (
               <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
                 <Text color="textSubtle">Farms available</Text>
                 <Text>

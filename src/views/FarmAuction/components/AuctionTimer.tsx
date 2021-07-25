@@ -21,8 +21,17 @@ const AuctionTimer: React.FC<{ auction: Auction }> = ({ auction }) => {
       </Flex>
     )
   }
-  if (auction.status === AuctionStatus.ToBeAnnounced || auction.status === AuctionStatus.Close) {
+  console.log('Stat', auction.status)
+  if (auction.status === AuctionStatus.ToBeAnnounced || auction.status === AuctionStatus.Closed) {
     return null
+  }
+  if (auction.status === AuctionStatus.Finished) {
+    return (
+      <Flex justifyContent="center" alignItems="center" mb="48px">
+        <Text bold>{t('Closing . . .')}</Text>
+        <PocketWatchIcon height="40px" width="40px" />
+      </Flex>
+    )
   }
   const { startDate, endDate } = auction
   const timerUntil = isAfter(startDate, new Date()) ? startDate : endDate

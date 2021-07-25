@@ -38,6 +38,10 @@ const AuctionRibbon: React.FC<{ auction: Auction; noAuctionHistory: boolean }> =
     ribbonText = t('Live!')
     color = 'success'
   }
+  if (status === AuctionStatus.Pending) {
+    ribbonText = t('GET READY!')
+    color = 'warning'
+  }
   return (
     <StyledRibbon color={color}>
       <div>{ribbonText}</div>

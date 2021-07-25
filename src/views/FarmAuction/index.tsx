@@ -10,8 +10,9 @@ import FAQs from './components/FAQs'
 import AuctionDetails from './components/AuctionDetailsCard/AuctionDetail'
 import AuctionLeaderboard from './components/AuctionLeaderboard/AuctionLeaderboard'
 import { FORM_ADDRESS } from './helpers'
-import { useCurrentFarmAuction } from './useCurrentFarmAuction'
+import { useCurrentFarmAuction } from './hooks/useCurrentFarmAuction'
 import AuctionTimer from './components/AuctionTimer'
+import ReclaimBidCard from './components/ReclaimBidCard'
 
 const StyledHeader = styled(PageHeader)`
   max-height: max-content;
@@ -107,7 +108,12 @@ const FarmAuction = () => {
         >
           <AuctionTimer auction={currentAuction} />
           <Flex width="100%" alignItems="flex-start" flexDirection={['column', null, null, 'row']}>
-            <AuctionDetails auction={currentAuction} connectedUser={connectedUser} refreshBidders={refreshBidders} />
+            <Flex flex="1" flexDirection="column">
+              <AuctionDetails auction={currentAuction} connectedUser={connectedUser} refreshBidders={refreshBidders} />
+              {connectedUser && connectedUser.isWhitelisted && (
+                <ReclaimBidCard auction={currentAuction} connectedUser={connectedUser} />
+              )}
+            </Flex>
             <AuctionLeaderboard auction={currentAuction} bidders={bidders} />
           </Flex>
         </PageSection>

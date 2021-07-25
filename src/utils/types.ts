@@ -53,7 +53,7 @@ export enum FarmAuctionContractStatus {
   Close,
 }
 
-interface AuctionsResponse {
+export interface AuctionsResponse {
   status: FarmAuctionContractStatus
   startBlock: ethers.BigNumber
   endBlock: ethers.BigNumber
@@ -62,7 +62,7 @@ interface AuctionsResponse {
   leaderboardLimit: ethers.BigNumber
 }
 
-interface GetBiddersPerAuctionResponse {
+export interface GetBiddersPerAuctionResponse {
   account: string
   amount: ethers.BigNumber
 }
@@ -76,10 +76,16 @@ type GetWhitelistedAddressesResponse = [
   ethers.BigNumber,
 ]
 
+interface AuctionsHistoryResponse {
+  totalAmount: ethers.BigNumber
+  hasClaimed: boolean
+}
+
 export interface FarmAuctionContract extends Contract {
   currentAuctionId: ContractFunction<CurrentAuctionIdResponse>
   auctions: ContractFunction<AuctionsResponse>
   getBiddersPerAuction: ContractFunction<GetBiddersPerAuctionResponse[]>
   isWhitelisted: ContractFunction<boolean>
   getWhitelistedAddresses: ContractFunction<GetWhitelistedAddressesResponse>
+  auctionsHistory: ContractFunction<AuctionsHistoryResponse>
 }

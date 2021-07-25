@@ -81,7 +81,6 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser,
       },
       onConfirm: () => {
         const bidAmount = new BigNumber(bid).times(DEFAULT_TOKEN_DECIMAL).toString()
-        console.log('Confirming bid', bidAmount)
         return farmAuctionContract.bid(bidAmount)
       },
       onSuccess: async () => {
@@ -92,14 +91,14 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser,
     })
 
   const handleInputChange = (input: string) => {
-    setIsMultipleOfTen(parseFloat(input) % 10 === 0)
+    setIsMultipleOfTen(parseFloat(input) % 10 === 0 && parseFloat(input) !== 0)
     setBid(input)
   }
 
   const setPercetageValue = (percentage) => {
     if (fetchStatus === FetchStatus.SUCCESS) {
       const valueToSet = getBalanceAmount(userCake.times(percentage))
-      setIsMultipleOfTen(valueToSet.mod(10).isZero())
+      setIsMultipleOfTen(valueToSet.mod(10).isZero() && !valueToSet.isZero())
       setBid(valueToSet.toString())
     }
   }
@@ -112,7 +111,7 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser,
         </Flex>
         <Flex justifyContent="space-between">
           <Text>Your position</Text>
-          <Text>#{bidderData.position}</Text>
+          <Text>{bidderData.position ? `#${bidderData.position}` : '-'}</Text>
         </Flex>
       </ExistingInfo>
       <InnerContent>

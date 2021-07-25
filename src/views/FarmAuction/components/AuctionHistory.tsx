@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { format } from 'date-fns'
 import styled from 'styled-components'
 import {
   Text,
@@ -10,7 +11,10 @@ import {
   ArrowLastIcon,
   IconButton,
   BunnyPlaceholderIcon,
+  Spinner,
 } from '@pancakeswap/uikit'
+import useAuctionHistory from '../hooks/useAuctionHistory'
+import AuctionLeaderboardTable from './AuctionLeaderboard/AuctionLeaderboardTable'
 
 interface AuctionHistoryProps {
   mostRecentClosedAuctionId: number
@@ -38,7 +42,33 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
   )
   const historyAuctionIdAsInt = parseInt(historyAuctionId, 10)
 
-  const endDate = null
+  const auctionHistory = useAuctionHistory(historyAuctionIdAsInt)
+  const selectedAuction = Object.values(auctionHistory).find(
+    (auctionData) => auctionData.auction.id === historyAuctionIdAsInt,
+  )
+
+  let auctionTable = selectedAuction ? (
+    <AuctionLeaderboardTable
+      auction={selectedAuction.auction}
+      bidders={selectedAuction.bidders}
+      noBidsText="No bids were placed in this auction"
+    />
+  ) : (
+    <Flex justifyContent="center" alignItems="center" p="24px" height="250px">
+      <Spinner />
+    </Flex>
+  )
+
+  if (Number.isNaN(historyAuctionIdAsInt)) {
+    auctionTable = (
+      <Flex flexDirection="column" justifyContent="center" alignItems="center" p="24px" height="250px">
+        <Text mb="8px">Please specify an auction ID</Text>
+        <BunnyPlaceholderIcon height="64px" width="64px" />
+      </Flex>
+    )
+  }
+
+  const endDate = selectedAuction ? format(selectedAuction.auction.endDate, 'MMM. dd yyyy, hh:mm aa') : null
 
   const handleHistoryAuctionChange = (event) => {
     const {
@@ -109,13 +139,11 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
           </StyledIconButton>
         </Flex>
         <Flex flex="2" justifyContent="flex-end">
-          {endDate && <Text>Ended Apr 14, 2020, 2:00 UTC</Text>}
+          {endDate && <Text>Ended {endDate}</Text>}
         </Flex>
       </Flex>
       {mostRecentClosedAuctionId ? (
-        <Box p="24px">
-          <Text>History</Text>
-        </Box>
+        auctionTable
       ) : (
         <Flex flexDirection="column" justifyContent="center" alignItems="center" p="24px" height="250px">
           <Text mb="8px">No history yet</Text>

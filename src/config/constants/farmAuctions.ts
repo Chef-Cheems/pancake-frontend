@@ -91,5 +91,5 @@ export const getBidderInfo = (account: string): FarmAuctionBidderConfig => {
   if (matchingBidder) {
     return matchingBidder
   }
-  return UNKNOWN_BIDDER
+  return { ...UNKNOWN_BIDDER, account }
 }
