@@ -29,8 +29,10 @@ const useReclaimAuctionBid = (
   const moveToPreviousAuctionId = (processedAuctionid: number) => {
     const previousAuctionId = processedAuctionid - 1
     if (previousAuctionId !== 0) {
+      setAuctionToReclaim(null)
       setNextAuctionIdToCheck(previousAuctionId)
     } else {
+      setAuctionToReclaim(null)
       setLoading(false)
       setAllChecked(true)
     }
