@@ -157,7 +157,6 @@ export const useSpecialBunnyPredictionContract = () => {
 
 export const useFarmAuctionContract = () => {
   const { account, library } = useActiveWeb3React()
-  // Check if you can make tx without getSigner()
   return useMemo(() => getFarmAuctionContract(account ? library.getSigner() : library), [library, account])
 }
 

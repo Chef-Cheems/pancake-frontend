@@ -1,10 +1,11 @@
 import { toDate, add, hoursToSeconds, intervalToDuration } from 'date-fns'
-import { BSC_BLOCK_TIME } from 'config'
+import { BSC_BLOCK_TIME, DEFAULT_TOKEN_DECIMAL } from 'config'
 import { getBidderInfo } from 'config/constants/farmAuctions'
 import { formatBigNumberToFixed } from 'utils/formatBalance'
 import { simpleRpcProvider } from 'utils/providers'
 import { AuctionsResponse, FarmAuctionContractStatus, GetBiddersPerAuctionResponse } from 'utils/types'
 import { Auction, AuctionStatus } from 'config/constants/types'
+import { ethersToBigNumber } from 'utils/bigNumber'
 
 export const FORM_ADDRESS =
   'https://docs.google.com/forms/d/e/1FAIpQLScUkwbsMWwg7L5jjGjEcmv6RsoCNhFDkV3xEpRu2KcJrr47Sw/viewform'
@@ -76,6 +77,7 @@ const getAuctionStartDate = async (currentBlock: number, startBlock: number) => 
 export const processAuctionData = async (auctionId: number, auctionResponse: AuctionsResponse): Promise<Auction> => {
   const processedAuctionData = {
     ...auctionResponse,
+    initialBidAmount: ethersToBigNumber(auctionResponse.initialBidAmount).div(DEFAULT_TOKEN_DECIMAL).toNumber(),
     startBlock: auctionResponse.startBlock.toNumber(),
     endBlock: auctionResponse.endBlock.toNumber(),
   }

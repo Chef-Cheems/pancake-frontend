@@ -10,6 +10,7 @@ import AuctionRibbon from './AuctionRibbon'
 import AuctionLeaderboardTable from './AuctionLeaderboardTable'
 
 const AuctionLeaderboardCard = styled(Card)`
+  width: 100%;
   overflow: visible;
   flex: 2;
 `
@@ -69,7 +70,7 @@ const CurrentAuctionCard: React.FC<AuctionLeaderboardProps> = ({ auction, bidder
       </TabToggleGroup>
       {activeTab === Tabs.Latest ? (
         <Box position="relative">
-          <Text bold fontSize="20px" p="24px">
+          <Text bold fontSize="20px" py="24px" px={['12px', '24px']}>
             Auction #{id}
           </Text>
           <AuctionRibbon auction={auction} noAuctionHistory={!getMostRecentClosedAuctionId(id, status)} />

@@ -15,6 +15,7 @@ const ScheduleInner = styled(Flex)`
 
 interface ScheduleProps {
   auction: Auction
+  showForClosedAuction?: boolean
 }
 
 export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
@@ -31,29 +32,39 @@ export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
       <ScheduleInner>
         {!noLiveOrPendingAuction && (
           <Flex justifyContent="space-between" mb="8px">
-            <Text color="textSubtle">{t('Auction duration')}</Text>
-            <Text>{t('%numHours% hours', { numHours: `~${auctionDuration.toString()}` })}</Text>
+            <Text small color="textSubtle">
+              {t('Auction duration')}
+            </Text>
+            <Text small>{t('%numHours% hours', { numHours: `~${auctionDuration.toString()}` })}</Text>
           </Flex>
         )}
         <Flex justifyContent="space-between" mb="8px">
-          <Text color="textSubtle">{t('Start')}</Text>
+          <Text small color="textSubtle">
+            {t('Start')}
+          </Text>
           {noLiveOrPendingAuction ? (
-            <Text>{t('To be announced')}</Text>
+            <Text small>{t('To be announced')}</Text>
           ) : (
             <Box>
-              <Text>{format(startDate, 'MMMM dd yyyy hh:mm aa')}</Text>
-              <Text textAlign="right">Block {startBlock}</Text>
+              <Text small>{format(startDate, 'MMMM dd yyyy hh:mm aa')}</Text>
+              <Text small textAlign="right">
+                Block {startBlock}
+              </Text>
             </Box>
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text color="textSubtle">{t('End')}</Text>
+          <Text small color="textSubtle">
+            {t('End')}
+          </Text>
           {noLiveOrPendingAuction ? (
-            <Text>{t('To be announced')}</Text>
+            <Text small>{t('To be announced')}</Text>
           ) : (
             <Box>
-              <Text>{format(endDate, 'MMMM dd yyyy hh:mm aa')}</Text>
-              <Text textAlign="right">Block {endBlock}</Text>
+              <Text small>{format(endDate, 'MMMM dd yyyy hh:mm aa')}</Text>
+              <Text small textAlign="right">
+                Block {endBlock}
+              </Text>
             </Box>
           )}
         </Flex>
@@ -62,11 +73,15 @@ export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
   )
 }
 
-export const FarmSchedule: React.FC<ScheduleProps> = ({ auction }) => {
+export const FarmSchedule: React.FC<ScheduleProps> = ({ auction, showForClosedAuction }) => {
   const { status, farmStartBlock, farmEndBlock, farmStartDate, farmEndDate } = auction
   const { t } = useTranslation()
 
-  const noLiveOrPendingAuction = status === AuctionStatus.ToBeAnnounced || status === AuctionStatus.Closed
+  let scheduleToBeAnnounced = status === AuctionStatus.ToBeAnnounced || status === AuctionStatus.Closed
+  // Schedule for closed auction is shown in congratulation card but not shown in Next Auction card
+  if (showForClosedAuction) {
+    scheduleToBeAnnounced = false
+  }
 
   return (
     <Flex flexDirection="column" mt="24px">
@@ -75,28 +90,38 @@ export const FarmSchedule: React.FC<ScheduleProps> = ({ auction }) => {
       </Text>
       <ScheduleInner>
         <Flex justifyContent="space-between" mb="8px">
-          <Text color="textSubtle">{t('Farm duration')}</Text>
-          <Text>7 days</Text>
+          <Text small color="textSubtle">
+            {t('Farm duration')}
+          </Text>
+          <Text small>7 days</Text>
         </Flex>
         <Flex justifyContent="space-between" mb="8px">
-          <Text color="textSubtle">{t('Start')}</Text>
-          {noLiveOrPendingAuction ? (
-            <Text>{t('To be announced')}</Text>
+          <Text small color="textSubtle">
+            {t('Start')}
+          </Text>
+          {scheduleToBeAnnounced ? (
+            <Text small>{t('To be announced')}</Text>
           ) : (
             <Box>
-              <Text>{format(farmStartDate, 'MMMM dd yyyy hh:mm aa')}</Text>
-              <Text textAlign="right">Block {farmStartBlock}</Text>
+              <Text small>{format(farmStartDate, 'MMMM dd yyyy hh:mm aa')}</Text>
+              <Text small textAlign="right">
+                Block {farmStartBlock}
+              </Text>
             </Box>
           )}
         </Flex>
         <Flex justifyContent="space-between">
-          <Text color="textSubtle">{t('End')}</Text>
-          {noLiveOrPendingAuction ? (
-            <Text>{t('To be announced')}</Text>
+          <Text small color="textSubtle">
+            {t('End')}
+          </Text>
+          {scheduleToBeAnnounced ? (
+            <Text small>{t('To be announced')}</Text>
           ) : (
             <Box>
-              <Text>{format(farmEndDate, 'MMMM dd yyyy hh:mm aa')}</Text>
-              <Text textAlign="right">Block {farmEndBlock}</Text>
+              <Text small>{format(farmEndDate, 'MMMM dd yyyy hh:mm aa')}</Text>
+              <Text small textAlign="right">
+                Block {farmEndBlock}
+              </Text>
             </Box>
           )}
         </Flex>

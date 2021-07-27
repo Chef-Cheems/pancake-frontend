@@ -3,16 +3,14 @@ import styled from 'styled-components'
 import BigNumber from 'bignumber.js'
 import {
   Text,
-  Card,
   Flex,
   Box,
-  PrizeIcon,
   OpenNewIcon,
   BunnyPlaceholderIcon,
   Skeleton,
   Button,
-  Spinner,
   useTooltip,
+  useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import { getBscScanLink } from 'utils'
 import EllipsisMenu, { OptionProps } from 'components/EllipsisMenu/EllipsisMenu'
@@ -22,7 +20,10 @@ import { Auction, Bidder } from 'config/constants/types'
 
 const LeaderboardContainer = styled.div`
   display: grid;
-  grid-template-columns: 5fr 5fr 5fr 1fr;
+  grid-template-columns: 1fr 5fr 3fr 1fr;
+  ${({ theme }) => theme.mediaQueries.md} {
+    grid-template-columns: 3fr 5fr 5fr 1fr;
+  }
 `
 
 const GridCell = styled(Flex)<{ isTopPosition }>`
@@ -72,9 +73,10 @@ interface LeaderboardRowProps {
   topLeaderboard: number
   bidder: Bidder
   cakePriceBusd: BigNumber
+  isMobile: boolean
 }
 
-const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ topLeaderboard, bidder, cakePriceBusd }) => {
+const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ topLeaderboard, bidder, cakePriceBusd, isMobile }) => {
   const { t } = useTranslation()
   const isTopPosition = bidder.position <= topLeaderboard
   const { tooltip, targetRef, tooltipVisible } = useTooltip(
@@ -87,22 +89,21 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ topLeaderboard, bidder,
   )
   return (
     <>
-      <GridCell isTopPosition={isTopPosition}>
-        <Flex pl="24px" ref={targetRef}>
-          {isTopPosition && <PrizeIcon color="warning" height="24px" width="24px" />}
-          <Text bold={isTopPosition} textTransform="uppercase" ml="8px">
+      <GridCell isTopPosition={isTopPosition} pl={['12px', '24px']}>
+        <Flex ref={targetRef}>
+          <Text bold={isTopPosition} textTransform="uppercase">
             #{bidder.position}
           </Text>
           {tooltipVisible && isTopPosition && tooltip}
         </Flex>
       </GridCell>
       <GridCell isTopPosition={isTopPosition}>
-        <Flex flexDirection="column">
+        <Flex flexDirection="column" pl={['8px']}>
           <Flex>
             <Text bold={isTopPosition} textTransform="uppercase" mr="4px">
               {bidder.farmName}
             </Text>
-            <Text>(1x)</Text>
+            {!isMobile && <Text>(1x)</Text>}
           </Flex>
           <Text fontSize="12px" color="textSubtle">
             {bidder.tokenName}
@@ -110,17 +111,17 @@ const LeaderboardRow: React.FC<LeaderboardRowProps> = ({ topLeaderboard, bidder,
         </Flex>
       </GridCell>
       <GridCell isTopPosition={isTopPosition}>
-        <Flex flexDirection="column" width="100%" justifyContent="flex-end">
-          <Text bold textTransform="uppercase" width="100%" textAlign="right" pr="24px">
-            {bidder.amount} CAKE
+        <Flex flexDirection="column" width="100%" justifyContent="flex-end" pr={[null, null, '24px']}>
+          <Text bold textTransform="uppercase" width="100%" textAlign="right">
+            {bidder.amount}
           </Text>
           {cakePriceBusd.gt(0) ? (
-            <Text fontSize="12px" color="textSubtle" textAlign="right" pr="24px">
-              {cakePriceBusd.times(bidder.amount).toNumber().toFixed(2)}
+            <Text fontSize="12px" color="textSubtle" textAlign="right">
+              ~{cakePriceBusd.times(bidder.amount).toNumber().toFixed(2)}
             </Text>
           ) : (
-            <Flex justifyContent="flex-end" pr="24px">
-              <Skeleton width="64px" />
+            <Flex justifyContent="flex-end">
+              <Skeleton width="48px" />
             </Flex>
           )}
         </Flex>
@@ -140,11 +141,13 @@ const AuctionLeaderboardTable: React.FC<{ auction: Auction; bidders: Bidder[]; n
   const [visibleBidders, setVisibleBidders] = useState(10)
   const cakePriceBusd = usePriceCakeBusd()
 
+  const { isXs, isSm } = useMatchBreakpoints()
+
   const totalBidders = bidders.length
 
   if (totalBidders === 0) {
     return (
-      <Flex justifyContent="center" alignItems="center" flexDirection="column" my="24px">
+      <Flex justifyContent="center" alignItems="center" flexDirection="column" py="24px">
         <Text mb="8px">{noBidsText}</Text>
         <BunnyPlaceholderIcon height="64px" width="64px" />
       </Flex>
@@ -153,14 +156,22 @@ const AuctionLeaderboardTable: React.FC<{ auction: Auction; bidders: Bidder[]; n
   return (
     <Box>
       <LeaderboardContainer>
-        <Text color="secondary" bold fontSize="12px" textTransform="uppercase" pl="24px" py="16px">
+        <Text color="secondary" bold fontSize="12px" textTransform="uppercase" pl={['12px', '24px']} py="16px">
           Position
         </Text>
-        <Text color="secondary" bold fontSize="12px" textTransform="uppercase" py="16px">
+        <Text color="secondary" bold fontSize="12px" textTransform="uppercase" pl={['8px']} py="16px">
           Farm
         </Text>
-        <Text color="secondary" bold fontSize="12px" textTransform="uppercase" textAlign="right" pr="24px" py="16px">
-          Total bid
+        <Text
+          color="secondary"
+          bold
+          fontSize="12px"
+          textTransform="uppercase"
+          textAlign="right"
+          pr={[null, null, '24px']}
+          py="16px"
+        >
+          CAKE bid
         </Text>
         <Box />
         {/* Rows */}
@@ -170,6 +181,7 @@ const AuctionLeaderboardTable: React.FC<{ auction: Auction; bidders: Bidder[]; n
             bidder={bidder}
             topLeaderboard={auction.topLeaderboard}
             cakePriceBusd={cakePriceBusd}
+            isMobile={isXs || isSm}
           />
         ))}
       </LeaderboardContainer>

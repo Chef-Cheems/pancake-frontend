@@ -21,7 +21,7 @@ const AuctionTimer: React.FC<{ auction: Auction }> = ({ auction }) => {
       </Flex>
     )
   }
-  console.log('Stat', auction.status)
+
   if (auction.status === AuctionStatus.ToBeAnnounced || auction.status === AuctionStatus.Closed) {
     return null
   }

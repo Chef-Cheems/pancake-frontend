@@ -34,11 +34,17 @@ interface AuctionDetailsProps {
 const AuctionDetails: React.FC<AuctionDetailsProps> = ({ auction, connectedUser, refreshBidders }) => {
   const { t } = useTranslation()
 
-  const [onPresentPlaceBid] = useModal(<PlaceBidModal connectedUser={connectedUser} refreshBidders={refreshBidders} />)
+  const [onPresentPlaceBid] = useModal(
+    <PlaceBidModal
+      connectedUser={connectedUser}
+      refreshBidders={refreshBidders}
+      initialBidAmount={auction?.initialBidAmount}
+    />,
+  )
 
   if (!auction) {
     return (
-      <AuctionDetailsCard mr={[null, null, null, '24px']} mb={['24px', null, null, '0']}>
+      <AuctionDetailsCard mb={['24px', null, null, '0']}>
         <CardHeader>
           <Heading>{t('Current Auction')}</Heading>
         </CardHeader>
@@ -76,16 +82,18 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ auction, connectedUser,
         <Tag outline variant="success" startIcon={<CheckmarkCircleIcon />}>
           Connected as {connectedUser.bidderData.tokenName}
         </Tag>
-        <Flex justifyContent="space-between" width="100%" pt="24px" px="8px">
-          <Text color="textSubtle">Your existing bid</Text>
-          <Text>{connectedUser.bidderData.amount} CAKE</Text>
+        <Flex justifyContent="space-between" width="100%" pt="24px">
+          <Text small color="textSubtle">
+            Your existing bid
+          </Text>
+          <Text small>{connectedUser.bidderData.amount} CAKE</Text>
         </Flex>
-        {connectedUser.bidderData.position && (
-          <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
-            <Text color="textSubtle">Your position</Text>
-            <Text>#{connectedUser.bidderData.position}</Text>
-          </Flex>
-        )}
+        <Flex justifyContent="space-between" width="100%" pt="8px">
+          <Text small color="textSubtle">
+            Your position
+          </Text>
+          <Text small>{connectedUser.bidderData.position ? `#${connectedUser.bidderData.position}` : '-'}</Text>
+        </Flex>
         <Button my="24px" width="100%" onClick={onPresentPlaceBid}>
           Place bid
         </Button>
@@ -95,10 +103,13 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ auction, connectedUser,
       </>
     )
   }
+
+  const cardTitle = auction.status === AuctionStatus.Closed ? t('Next Auction') : t('Current Auction')
+
   return (
-    <AuctionDetailsCard mr={[null, null, null, '24px']} mb={['24px', null, null, '0']}>
+    <AuctionDetailsCard mb={['24px', null, null, '0']}>
       <CardHeader>
-        <Heading>{t('Current Auction')}</Heading>
+        <Heading>{cardTitle}</Heading>
       </CardHeader>
       <CardBody>
         <AuctionSchedule auction={auction} />

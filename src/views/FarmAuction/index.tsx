@@ -13,6 +13,8 @@ import { FORM_ADDRESS } from './helpers'
 import { useCurrentFarmAuction } from './hooks/useCurrentFarmAuction'
 import AuctionTimer from './components/AuctionTimer'
 import ReclaimBidCard from './components/ReclaimBidCard'
+import NotWhitelistedNotice from './components/NotWhitelistedNotice'
+import CongratulationsCard from './components/CongratulationsCard'
 
 const StyledHeader = styled(PageHeader)`
   max-height: max-content;
@@ -60,13 +62,19 @@ const Right = styled(Flex)`
   }
 `
 
+const AuctionContainer = styled(Flex)`
+  width: 100%;
+  align-items: flex-start;
+
+  ${({ theme }) => theme.mediaQueries.md} {
+    gap: 24px;
+  }
+`
+
 const FarmAuction = () => {
   const { t } = useTranslation()
   const { theme } = useTheme()
   const { account } = useWeb3React()
-
-  // const { toastSuccess } = useToast()
-  // const cakeContract = useCake()
 
   const { currentAuction, bidders, connectedUser, refreshBidders } = useCurrentFarmAuction(account)
 
@@ -106,16 +114,18 @@ const FarmAuction = () => {
           concaveBackgroundLight={theme.colors.background}
           curvePosition="top"
         >
+          <NotWhitelistedNotice connectedUser={connectedUser} auction={currentAuction} />
           <AuctionTimer auction={currentAuction} />
-          <Flex width="100%" alignItems="flex-start" flexDirection={['column', null, null, 'row']}>
-            <Flex flex="1" flexDirection="column">
+          <AuctionContainer flexDirection={['column', null, null, 'row']}>
+            <Flex flex="1" flexDirection="column" width="100%" minWidth="288px">
               <AuctionDetails auction={currentAuction} connectedUser={connectedUser} refreshBidders={refreshBidders} />
-              {connectedUser && connectedUser.isWhitelisted && (
-                <ReclaimBidCard auction={currentAuction} connectedUser={connectedUser} />
+              {connectedUser?.isWhitelisted && bidders && currentAuction && (
+                <CongratulationsCard currentAuction={currentAuction} bidders={bidders} />
               )}
+              {connectedUser?.isWhitelisted && <ReclaimBidCard auction={currentAuction} />}
             </Flex>
             <AuctionLeaderboard auction={currentAuction} bidders={bidders} />
-          </Flex>
+          </AuctionContainer>
         </PageSection>
         <PageSection p="24px 0" background={FAQS_BG} index={3} hasCurvedDivider={false}>
           <FAQs />

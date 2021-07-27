@@ -38,17 +38,26 @@ const InnerContent = styled(Box)`
 
 interface PlaceBidModalProps {
   onDismiss?: () => void
+  // undefined initialBidAmount is passed only if auction is not loaded
+  // in this case modal will not be possible to open
+  initialBidAmount?: number
   connectedUser: ConnectedBidder
   refreshBidders: () => void
 }
 
-const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser, refreshBidders }) => {
+const PlaceBidModal: React.FC<PlaceBidModalProps> = ({
+  onDismiss,
+  initialBidAmount,
+  connectedUser,
+  refreshBidders,
+}) => {
   const { account } = useWeb3React()
   const { t } = useTranslation()
   const { theme } = useTheme()
 
   const [bid, setBid] = useState('')
   const [isMultipleOfTen, setIsMultipleOfTen] = useState(false)
+  const [isMoreThanInitialBidAmount, setIsMoreThanInitialBidAmount] = useState(false)
 
   const { balance: userCake, fetchStatus } = useTokenBalance(getCakeAddress())
 
@@ -61,6 +70,8 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser,
   const cakePriceBusd = new BigNumber(12500000000000000000)
 
   const { bidderData } = connectedUser
+  const isFirstBid = parseInt(bidderData.amount, 10) === 0
+  const isInvalidFirstBid = isFirstBid && !isMoreThanInitialBidAmount
 
   const { isApproving, isApproved, isConfirmed, isConfirming, handleApprove, handleConfirm } =
     useApproveConfirmTransaction({
@@ -91,6 +102,7 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser,
     })
 
   const handleInputChange = (input: string) => {
+    setIsMoreThanInitialBidAmount(parseFloat(input) >= initialBidAmount)
     setIsMultipleOfTen(parseFloat(input) % 10 === 0 && parseFloat(input) !== 0)
     setBid(input)
   }
@@ -98,6 +110,7 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser,
   const setPercetageValue = (percentage) => {
     if (fetchStatus === FetchStatus.SUCCESS) {
       const valueToSet = getBalanceAmount(userCake.times(percentage))
+      setIsMoreThanInitialBidAmount(valueToSet.gte(initialBidAmount))
       setIsMultipleOfTen(valueToSet.mod(10).isZero() && !valueToSet.isZero())
       setBid(valueToSet.toString())
     }
@@ -122,8 +135,9 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser,
             <Text>CAKE</Text>
           </Flex>
         </Flex>
+        {isFirstBid && <Text pb="8px">First bid must be {initialBidAmount} CAKE or more.</Text>}
         <BalanceInput
-          isWarning={!isMultipleOfTen}
+          isWarning={!isMultipleOfTen || isInvalidFirstBid}
           placeholder="0"
           value={bid}
           onUserInput={handleInputChange}
@@ -179,7 +193,9 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({ onDismiss, connectedUser,
             <ApproveConfirmButtons
               isApproveDisabled={isApproved}
               isApproving={isApproving}
-              isConfirmDisabled={!isMultipleOfTen || getBalanceAmount(userCake).lt(bid) || isConfirmed}
+              isConfirmDisabled={
+                !isMultipleOfTen || getBalanceAmount(userCake).lt(bid) || isConfirmed || isInvalidFirstBid
+              }
               isConfirming={isConfirming}
               onApprove={handleApprove}
               onConfirm={handleConfirm}

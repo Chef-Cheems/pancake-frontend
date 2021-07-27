@@ -216,7 +216,7 @@ export interface Auction {
   farmStartDate: Date
   farmEndBlock: number
   farmEndDate: Date
-  initialBidAmount: ethers.BigNumber
+  initialBidAmount: number
   topLeaderboard: number
   leaderboardLimit: ethers.BigNumber
 }

@@ -1,33 +1,15 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import {
-  Text,
-  Heading,
-  Card,
-  CardHeader,
-  CardBody,
-  Flex,
-  Box,
-  Spinner,
-  Skeleton,
-  Tag,
-  Button,
-  CheckmarkCircleIcon,
-  CardFooter,
-  ExpandableLabel,
-  useModal,
-} from '@pancakeswap/uikit'
+import { Text, Flex, Box, CardFooter, ExpandableLabel } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Auction, AuctionStatus } from 'config/constants/types'
 import { whitelistedBidders } from 'config/constants/farmAuctions'
+import { CAKE_PER_WEEK_1X_FARM } from 'config'
 import { FarmSchedule } from './AuctionSchedule'
 
 const FooterInner = styled(Box)`
   background-color: ${({ theme }) => theme.colors.dropdown};
 `
-
-const CAKE_PER_DAY_1X_FARM = 1514
-const CAKE_PER_WEEK_1X_FARM = CAKE_PER_DAY_1X_FARM * 7
 
 const AuctionFooter: React.FC<{ auction: Auction }> = ({ auction }) => {
   const [isExpanded, setIsExpanded] = useState(false)

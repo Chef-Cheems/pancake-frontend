@@ -12,6 +12,7 @@ import {
   IconButton,
   BunnyPlaceholderIcon,
   Spinner,
+  useMatchBreakpoints,
 } from '@pancakeswap/uikit'
 import useAuctionHistory from '../hooks/useAuctionHistory'
 import AuctionLeaderboardTable from './AuctionLeaderboard/AuctionLeaderboardTable'
@@ -41,6 +42,8 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
     mostRecentClosedAuctionId ? mostRecentClosedAuctionId.toString() : '0',
   )
   const historyAuctionIdAsInt = parseInt(historyAuctionId, 10)
+
+  const { isXs, isSm, isMd, isLg, isXl } = useMatchBreakpoints()
 
   const auctionHistory = useAuctionHistory(historyAuctionIdAsInt)
   const selectedAuction = Object.values(auctionHistory).find(
@@ -98,12 +101,12 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
   }
   return (
     <Box py="24px">
-      <Flex px="24px" justifyContent="space-between" alignItems="center">
+      <Flex px={['12px', '24px']} justifyContent="space-between" alignItems="center">
         <Flex flex="3" alignItems="center">
-          <Text bold fontSize="20px" mr="8px">
+          <Text bold fontSize={isLg || isXl ? '20px' : '16px'} mr={['4px', '8px']}>
             Auction #
           </Text>
-          <Box width="62px" mr="16px">
+          <Box width="62px" mr={['4px', '16px']}>
             <Input
               disabled={!mostRecentClosedAuctionId}
               type="input"
@@ -115,7 +118,7 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
             disabled={!historyAuctionIdAsInt || historyAuctionIdAsInt <= 1}
             variant="text"
             scale="sm"
-            mr="12px"
+            mr={['8px', '12px']}
             onClick={() => handleArrowPress(historyAuctionIdAsInt - 1)}
           >
             <ArrowBackIcon />
@@ -124,7 +127,7 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
             disabled={historyAuctionIdAsInt >= mostRecentClosedAuctionId}
             variant="text"
             scale="sm"
-            mr="12px"
+            mr={['8px', '12px']}
             onClick={() => handleArrowPress(historyAuctionIdAsInt + 1)}
           >
             <ArrowForwardIcon />
@@ -138,10 +141,17 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
             <ArrowLastIcon />
           </StyledIconButton>
         </Flex>
-        <Flex flex="2" justifyContent="flex-end">
+        {(isLg || isXl) && (
+          <Flex flex="2" justifyContent="flex-end">
+            {endDate && <Text>Ended {endDate}</Text>}
+          </Flex>
+        )}
+      </Flex>
+      {(isXs || isSm || isMd) && (
+        <Flex px={['12px', '24px']} pt="8px">
           {endDate && <Text>Ended {endDate}</Text>}
         </Flex>
-      </Flex>
+      )}
       {mostRecentClosedAuctionId ? (
         auctionTable
       ) : (
