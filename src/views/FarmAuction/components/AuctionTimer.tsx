@@ -28,7 +28,7 @@ const AuctionTimer: React.FC<{ auction: Auction }> = ({ auction }) => {
   if (auction.status === AuctionStatus.Finished) {
     return (
       <Flex justifyContent="center" alignItems="center" mb="48px">
-        <Text bold>{t('Closing . . .')}</Text>
+        <Text bold>{t('Closing')}...</Text>
         <PocketWatchIcon height="40px" width="40px" />
       </Flex>
     )
@@ -40,7 +40,7 @@ const AuctionTimer: React.FC<{ auction: Auction }> = ({ auction }) => {
   const { days, hours, minutes } = getTimePeriods(secondsRemaining)
   return (
     <Flex justifyContent="center" alignItems="center" mb="48px">
-      <Text bold>{timerTitle}</Text>
+      <Text bold>{timerTitle}: </Text>
       <AuctionCountDown>
         {days !== 0 && (
           <>
@@ -48,7 +48,7 @@ const AuctionTimer: React.FC<{ auction: Auction }> = ({ auction }) => {
               {days}
             </Text>
             <Text verticalAlign="baseline" bold mr="4px">
-              d
+              {t('d')}
             </Text>
           </>
         )}
@@ -56,13 +56,13 @@ const AuctionTimer: React.FC<{ auction: Auction }> = ({ auction }) => {
           {hours}
         </Text>
         <Text verticalAlign="baseline" bold mr="4px">
-          h
+          {t('h')}
         </Text>
         <Text verticalAlign="baseline" lineHeight="28px" fontSize="24px" bold color="secondary" mr="4px">
           {minutes}
         </Text>
         <Text verticalAlign="baseline" bold>
-          m
+          {t('m')}
         </Text>
       </AuctionCountDown>
       <PocketWatchIcon height="40px" width="40px" />

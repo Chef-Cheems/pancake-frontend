@@ -25,22 +25,22 @@ const AuctionFooter: React.FC<{ auction: Auction }> = ({ auction }) => {
           <Flex p="16px" flexDirection="column">
             {isLiveOrPendingAuction && (
               <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
-                <Text color="textSubtle">Farms available</Text>
+                <Text color="textSubtle">{t('Farms available')}</Text>
                 <Text>
-                  {topLeaderboard} (top {topLeaderboard} bidders)
+                  {topLeaderboard} ({t('top %num% bidders', { num: topLeaderboard })})
                 </Text>
               </Flex>
             )}
             <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
-              <Text color="textSubtle">Weekly CAKE rewards per farm</Text>
+              <Text color="textSubtle">{t('Weekly CAKE rewards per farm')}</Text>
               <Text>{CAKE_PER_WEEK_1X_FARM.toLocaleString()}</Text>
             </Flex>
             <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
-              <Text color="textSubtle">Multiplier per farm</Text>
+              <Text color="textSubtle">{t('Multiplier per farm')}</Text>
               <Text>1x</Text>
             </Flex>
             <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
-              <Text color="textSubtle">Total whitelisted bidders</Text>
+              <Text color="textSubtle">{t('Total whitelisted bidders')}</Text>
               <Text>{whitelistedBidders.length}</Text>
             </Flex>
             <FarmSchedule auction={auction} />

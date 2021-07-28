@@ -119,23 +119,25 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({
     <StyledModal title={t('Place a Bid')} onDismiss={onDismiss} headerBackground={theme.colors.gradients.cardHeader}>
       <ExistingInfo>
         <Flex justifyContent="space-between">
-          <Text>Your existing bid</Text>
-          <Text>{bidderData.amount} CAKE</Text>
+          <Text>{t('Your existing bid')}</Text>
+          <Text>{t('%num% CAKE', { num: bidderData.amount })}</Text>
         </Flex>
         <Flex justifyContent="space-between">
-          <Text>Your position</Text>
+          <Text>{t('Your position')}</Text>
           <Text>{bidderData.position ? `#${bidderData.position}` : '-'}</Text>
         </Flex>
       </ExistingInfo>
       <InnerContent>
         <Flex justifyContent="space-between" alignItems="center" pb="8px">
-          <Text>Bid a multiple of 10</Text>
+          <Text>{t('Bid a multiple of 10')}</Text>
           <Flex>
             <PancakeRoundIcon width="24px" height="24px" />
-            <Text>CAKE</Text>
+            <Text bold>CAKE</Text>
           </Flex>
         </Flex>
-        {isFirstBid && <Text pb="8px">First bid must be {initialBidAmount} CAKE or more.</Text>}
+        {isFirstBid && (
+          <Text pb="8px">{t('First bid must be %initialBidAmount% CAKE or more.', { initialBidAmount })}</Text>
+        )}
         <BalanceInput
           isWarning={!isMultipleOfTen || isInvalidFirstBid}
           placeholder="0"
@@ -206,7 +208,7 @@ const PlaceBidModal: React.FC<PlaceBidModalProps> = ({
           )}
         </Flex>
         <Text color="textSubtle" small mt="24px">
-          If your bid is unsuccessful, you’ll be able to reclaim your CAKE after the auction.
+          {t('If your bid is unsuccessful, you’ll be able to reclaim your CAKE after the auction.')}
         </Text>
       </InnerContent>
     </StyledModal>

@@ -47,7 +47,7 @@ const CurrentAuctionCard: React.FC<AuctionLeaderboardProps> = ({ auction, bidder
             {t('Latest')}
           </TabToggle>
           <TabToggle isActive={activeTab === Tabs.Archive} onClick={() => setActiveTab(Tabs.Archive)}>
-            Archive
+            {t('Archive')}
           </TabToggle>
         </TabToggleGroup>
         <Flex justifyContent="center" alignItems="center" flexDirection="column" height="320px">
@@ -62,16 +62,16 @@ const CurrentAuctionCard: React.FC<AuctionLeaderboardProps> = ({ auction, bidder
     <AuctionLeaderboardCard>
       <TabToggleGroup>
         <TabToggle isActive={activeTab === Tabs.Latest} onClick={() => setActiveTab(Tabs.Latest)}>
-          Latest
+          {t('Latest')}
         </TabToggle>
         <TabToggle isActive={activeTab === Tabs.Archive} onClick={() => setActiveTab(Tabs.Archive)}>
-          Archive
+          {t('Archive')}
         </TabToggle>
       </TabToggleGroup>
       {activeTab === Tabs.Latest ? (
         <Box position="relative">
           <Text bold fontSize="20px" py="24px" px={['12px', '24px']}>
-            Auction #{id}
+            {t('Auction #%auctionId%', { auctionId: id })}
           </Text>
           <AuctionRibbon auction={auction} noAuctionHistory={!getMostRecentClosedAuctionId(id, status)} />
           <AuctionProgress auction={auction} />

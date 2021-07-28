@@ -14,6 +14,7 @@ import {
   Spinner,
   useMatchBreakpoints,
 } from '@pancakeswap/uikit'
+import { useTranslation } from 'contexts/Localization'
 import useAuctionHistory from '../hooks/useAuctionHistory'
 import AuctionLeaderboardTable from './AuctionLeaderboard/AuctionLeaderboardTable'
 
@@ -43,6 +44,8 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
   )
   const historyAuctionIdAsInt = parseInt(historyAuctionId, 10)
 
+  const { t } = useTranslation()
+
   const { isXs, isSm, isMd, isLg, isXl } = useMatchBreakpoints()
 
   const auctionHistory = useAuctionHistory(historyAuctionIdAsInt)
@@ -65,7 +68,7 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
   if (Number.isNaN(historyAuctionIdAsInt)) {
     auctionTable = (
       <Flex flexDirection="column" justifyContent="center" alignItems="center" p="24px" height="250px">
-        <Text mb="8px">Please specify an auction ID</Text>
+        <Text mb="8px">{t('Please specify auction ID')}</Text>
         <BunnyPlaceholderIcon height="64px" width="64px" />
       </Flex>
     )
@@ -104,7 +107,7 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
       <Flex px={['12px', '24px']} justifyContent="space-between" alignItems="center">
         <Flex flex="3" alignItems="center">
           <Text bold fontSize={isLg || isXl ? '20px' : '16px'} mr={['4px', '8px']}>
-            Auction #
+            {t('Auction #')}
           </Text>
           <Box width="62px" mr={['4px', '16px']}>
             <Input
@@ -143,20 +146,20 @@ const AuctionHistory: React.FC<AuctionHistoryProps> = ({ mostRecentClosedAuction
         </Flex>
         {(isLg || isXl) && (
           <Flex flex="2" justifyContent="flex-end">
-            {endDate && <Text>Ended {endDate}</Text>}
+            {endDate && <Text>{t('Ended %date%', { date: endDate })}</Text>}
           </Flex>
         )}
       </Flex>
       {(isXs || isSm || isMd) && (
         <Flex px={['12px', '24px']} pt="8px">
-          {endDate && <Text>Ended {endDate}</Text>}
+          {endDate && <Text>{t('Ended %date%', { date: endDate })}</Text>}
         </Flex>
       )}
       {mostRecentClosedAuctionId ? (
         auctionTable
       ) : (
         <Flex flexDirection="column" justifyContent="center" alignItems="center" p="24px" height="250px">
-          <Text mb="8px">No history yet</Text>
+          <Text mb="8px">{t('No history yet')}</Text>
           <BunnyPlaceholderIcon height="64px" width="64px" />
         </Flex>
       )}

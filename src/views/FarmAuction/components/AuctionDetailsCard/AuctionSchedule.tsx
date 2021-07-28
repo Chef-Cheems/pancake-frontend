@@ -48,7 +48,7 @@ export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
             <Box>
               <Text small>{format(startDate, 'MMMM dd yyyy hh:mm aa')}</Text>
               <Text small textAlign="right">
-                Block {startBlock}
+                {t('Block %num%', { num: startBlock })}
               </Text>
             </Box>
           )}
@@ -63,7 +63,7 @@ export const AuctionSchedule: React.FC<ScheduleProps> = ({ auction }) => {
             <Box>
               <Text small>{format(endDate, 'MMMM dd yyyy hh:mm aa')}</Text>
               <Text small textAlign="right">
-                Block {endBlock}
+                {t('Block %num%', { num: endBlock })}
               </Text>
             </Box>
           )}
@@ -86,14 +86,14 @@ export const FarmSchedule: React.FC<ScheduleProps> = ({ auction, showForClosedAu
   return (
     <Flex flexDirection="column" mt="24px">
       <Text textTransform="uppercase" color="secondary" bold fontSize="12px" mb="8px">
-        Farm schedule
+        {t('Farm schedule')}
       </Text>
       <ScheduleInner>
         <Flex justifyContent="space-between" mb="8px">
           <Text small color="textSubtle">
             {t('Farm duration')}
           </Text>
-          <Text small>7 days</Text>
+          <Text small>{t('%num% days', { num: 7 })}</Text>
         </Flex>
         <Flex justifyContent="space-between" mb="8px">
           <Text small color="textSubtle">
@@ -105,7 +105,7 @@ export const FarmSchedule: React.FC<ScheduleProps> = ({ auction, showForClosedAu
             <Box>
               <Text small>{format(farmStartDate, 'MMMM dd yyyy hh:mm aa')}</Text>
               <Text small textAlign="right">
-                Block {farmStartBlock}
+                {t('Block %num%', { num: farmStartBlock })}
               </Text>
             </Box>
           )}
@@ -120,7 +120,7 @@ export const FarmSchedule: React.FC<ScheduleProps> = ({ auction, showForClosedAu
             <Box>
               <Text small>{format(farmEndDate, 'MMMM dd yyyy hh:mm aa')}</Text>
               <Text small textAlign="right">
-                Block {farmEndBlock}
+                {t('Block %num%', { num: farmEndBlock })}
               </Text>
             </Box>
           )}

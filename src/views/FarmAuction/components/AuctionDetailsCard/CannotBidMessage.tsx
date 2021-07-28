@@ -19,7 +19,7 @@ const CannotBidMessage = () => {
   return (
     <Flex justifyContent="center" alignItems="center">
       <Text color="textSubtle" small mr="8px">
-        Why cant I bid for a farm?
+        {t('Why cant I bid for a farm?')}
       </Text>
       <span ref={targetRef}>
         <HelpIcon color="textSubtle" height="16px" width="16px" />

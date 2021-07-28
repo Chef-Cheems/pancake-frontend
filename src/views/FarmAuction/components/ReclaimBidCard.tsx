@@ -30,31 +30,30 @@ const ReclaimBidCard: React.FC<{ auction: Auction }> = ({ auction }) => {
 
   const { toastSuccess } = useToast()
 
-  const { isApproving, isApproved, isConfirmed, isConfirming, handleApprove, handleConfirm } =
-    useApproveConfirmTransaction({
-      onRequiresApproval: async () => {
-        try {
-          const response = await cakeContract.allowance(account, farmAuctionContract.address)
-          const currentAllowance = ethersToBigNumber(response)
-          return currentAllowance.gt(0)
-        } catch (error) {
-          return false
-        }
-      },
-      onApprove: () => {
-        return cakeContract.approve(farmAuctionContract.address, ethers.constants.MaxUint256)
-      },
-      onApproveSuccess: async () => {
-        toastSuccess(t('Contract approved - you can now place your bid!'))
-      },
-      onConfirm: () => {
-        return farmAuctionContract.claimAuction(reclaimableAuction.id)
-      },
-      onSuccess: async () => {
-        checkForNextReclaimableAuction(reclaimableAuction.id)
-        toastSuccess(t('Bid placed!'))
-      },
-    })
+  const { isApproving, isApproved, isConfirming, handleApprove, handleConfirm } = useApproveConfirmTransaction({
+    onRequiresApproval: async () => {
+      try {
+        const response = await cakeContract.allowance(account, farmAuctionContract.address)
+        const currentAllowance = ethersToBigNumber(response)
+        return currentAllowance.gt(0)
+      } catch (error) {
+        return false
+      }
+    },
+    onApprove: () => {
+      return cakeContract.approve(farmAuctionContract.address, ethers.constants.MaxUint256)
+    },
+    onApproveSuccess: async () => {
+      toastSuccess(t('Contract approved - you can now reclaim your bid!'))
+    },
+    onConfirm: () => {
+      return farmAuctionContract.claimAuction(reclaimableAuction.id)
+    },
+    onSuccess: async () => {
+      checkForNextReclaimableAuction(reclaimableAuction.id)
+      toastSuccess(t('Bid reclaimed!'))
+    },
+  })
 
   let cardBody = null
 
@@ -62,7 +61,7 @@ const ReclaimBidCard: React.FC<{ auction: Auction }> = ({ auction }) => {
     cardBody = (
       <Flex justifyContent="center" alignItems="center" flexDirection="column">
         <Spinner />
-        <Text mt="8px">Checking your recent activity...</Text>
+        <Text mt="8px">{t('Checking your recent activity...')}</Text>
       </Flex>
     )
   } else if (!reclaimableAuction) {
@@ -73,7 +72,7 @@ const ReclaimBidCard: React.FC<{ auction: Auction }> = ({ auction }) => {
         </Text>
         {!allChecked && (
           <Button variant="text" onClick={checkAllAuctions}>
-            Check all auction
+            {t('Check all auctions')}
           </Button>
         )}
       </Flex>
@@ -81,23 +80,25 @@ const ReclaimBidCard: React.FC<{ auction: Auction }> = ({ auction }) => {
   } else {
     cardBody = (
       <>
-        <Text mb="16px">Your bid in Auction #{reclaimableAuction.id} was unsuccessful.</Text>
+        <Text mb="16px">
+          {t('Your bid in Auction #%auctionId% was unsuccessful.', { auctionId: reclaimableAuction.id })}
+        </Text>
         <Text bold mb="16px">
-          Reclaim your CAKE now.
+          {t('Reclaim your CAKE now.')}
         </Text>
         <Flex justifyContent="space-between" mb="8px">
-          <Text color="textSubtle">Your total bid</Text>
-          <Text>{reclaimableAuction.amount} CAKE</Text>
+          <Text color="textSubtle">{t('Your total bid')}</Text>
+          <Text>{t('%num% CAKE', { num: reclaimableAuction.amount })}</Text>
         </Flex>
         <Flex justifyContent="space-between" mb="24px">
-          <Text color="textSubtle">Your position</Text>
+          <Text color="textSubtle">{t('Your position')}</Text>
           <Text>#{reclaimableAuction.position}</Text>
         </Flex>
         {account ? (
           <ApproveConfirmButtons
             isApproveDisabled={isApproved}
             isApproving={isApproving}
-            isConfirmDisabled={isConfirmed}
+            isConfirmDisabled={false}
             isConfirming={isConfirming}
             onApprove={handleApprove}
             onConfirm={handleConfirm}

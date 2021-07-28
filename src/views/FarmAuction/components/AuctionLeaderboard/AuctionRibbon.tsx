@@ -1,3 +1,4 @@
+import { Text } from '@pancakeswap/uikit'
 import { Auction, AuctionStatus } from 'config/constants/types'
 import { useTranslation } from 'contexts/Localization'
 import React from 'react'
@@ -17,7 +18,7 @@ const StyledRibbon = styled.div<{ color: string }>`
   clip-path: polygon(0 0, 40% 0, 100% 60%, 100% 100%);
 
   & > div {
-    padding-top: 26%;
+    padding-top: 23%;
     overflow: hidden;
     transform: rotate(45deg);
   }
@@ -35,16 +36,18 @@ const AuctionRibbon: React.FC<{ auction: Auction; noAuctionHistory: boolean }> =
   let ribbonText = t('Finished')
   let color = 'textDisabled'
   if (status === AuctionStatus.Open) {
-    ribbonText = t('Live!')
+    ribbonText = `${t('Live')}!`
     color = 'success'
   }
   if (status === AuctionStatus.Pending) {
-    ribbonText = t('GET READY!')
+    ribbonText = `${t('Get ready')}!`
     color = 'warning'
   }
   return (
     <StyledRibbon color={color}>
-      <div>{ribbonText}</div>
+      <Text color="white" textTransform="uppercase">
+        {ribbonText}
+      </Text>
     </StyledRibbon>
   )
 }

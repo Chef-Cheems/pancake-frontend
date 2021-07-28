@@ -80,25 +80,25 @@ const AuctionDetails: React.FC<AuctionDetailsProps> = ({ auction, connectedUser,
     bidSection = (
       <>
         <Tag outline variant="success" startIcon={<CheckmarkCircleIcon />}>
-          Connected as {connectedUser.bidderData.tokenName}
+          {t('Connected as %projectName%', { projectName: connectedUser.bidderData.tokenName })}
         </Tag>
         <Flex justifyContent="space-between" width="100%" pt="24px">
           <Text small color="textSubtle">
-            Your existing bid
+            {t('Your existing bid')}
           </Text>
           <Text small>{connectedUser.bidderData.amount} CAKE</Text>
         </Flex>
         <Flex justifyContent="space-between" width="100%" pt="8px">
           <Text small color="textSubtle">
-            Your position
+            {t('Your position')}
           </Text>
           <Text small>{connectedUser.bidderData.position ? `#${connectedUser.bidderData.position}` : '-'}</Text>
         </Flex>
         <Button my="24px" width="100%" onClick={onPresentPlaceBid}>
-          Place bid
+          {t('Place bid')}
         </Button>
         <Text color="textSubtle" small>
-          If your bid is unsuccessful, you’ll be able to reclaim your CAKE after the auction.
+          {t('If your bid is unsuccessful, you’ll be able to reclaim your CAKE after the auction.')}
         </Text>
       </>
     )

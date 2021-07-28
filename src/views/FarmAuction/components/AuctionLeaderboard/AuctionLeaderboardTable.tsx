@@ -140,6 +140,7 @@ const AuctionLeaderboardTable: React.FC<{ auction: Auction; bidders: Bidder[]; n
 }) => {
   const [visibleBidders, setVisibleBidders] = useState(10)
   const cakePriceBusd = usePriceCakeBusd()
+  const { t } = useTranslation()
 
   const { isXs, isSm } = useMatchBreakpoints()
 
@@ -153,14 +154,16 @@ const AuctionLeaderboardTable: React.FC<{ auction: Auction; bidders: Bidder[]; n
       </Flex>
     )
   }
+
+  // TODO: see all whitelisted bidders needs to open modal
   return (
     <Box>
       <LeaderboardContainer>
         <Text color="secondary" bold fontSize="12px" textTransform="uppercase" pl={['12px', '24px']} py="16px">
-          Position
+          {t('Position')}
         </Text>
         <Text color="secondary" bold fontSize="12px" textTransform="uppercase" pl={['8px']} py="16px">
-          Farm
+          {t('Farm')}
         </Text>
         <Text
           color="secondary"
@@ -171,7 +174,7 @@ const AuctionLeaderboardTable: React.FC<{ auction: Auction; bidders: Bidder[]; n
           pr={[null, null, '24px']}
           py="16px"
         >
-          CAKE bid
+          {t('CAKE bid')}
         </Text>
         <Box />
         {/* Rows */}
@@ -187,7 +190,9 @@ const AuctionLeaderboardTable: React.FC<{ auction: Auction; bidders: Bidder[]; n
       </LeaderboardContainer>
       <Flex mt="16px" flexDirection="column" justifyContent="center" alignItems="center">
         {visibleBidders <= 10 && totalBidders > 10 && (
-          <Text color="textSubtle">Showing top 10 bids only. See all whitelisted bidders</Text>
+          <Text color="textSubtle">
+            {t('Showing top 10 bids only.')} {t('See all whitelisted bidders')}
+          </Text>
         )}
         {visibleBidders < totalBidders && (
           <Button
@@ -202,7 +207,7 @@ const AuctionLeaderboardTable: React.FC<{ auction: Auction; bidders: Bidder[]; n
               })
             }
           >
-            Show more
+            {t('Show More')}
           </Button>
         )}
       </Flex>
