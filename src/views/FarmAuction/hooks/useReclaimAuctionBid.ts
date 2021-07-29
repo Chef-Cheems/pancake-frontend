@@ -11,8 +11,14 @@ interface ReclaimableAuction {
   position: number
 }
 
-const INITIAL_AUCTIONS_TO_CHECK = 1
+const INITIAL_AUCTIONS_TO_CHECK = 4
 
+/**
+ * This hook checks if user has participated in previous auctions and has some bids to claim back.
+ * @param currentAuction serves as starting point,
+ *     if it is closed then hook will check if its claimable, if not closed - will try previous auction
+ * @returns
+ */
 const useReclaimAuctionBid = (
   currentAuction: Auction,
 ): [ReclaimableAuction | null, boolean, boolean, (processedAuctionid: number) => void, () => void] => {
@@ -41,6 +47,8 @@ const useReclaimAuctionBid = (
   const checkAllAuctions = () => {
     setAuctionsToCheck(currentAuction.id - 1)
   }
+
+  // TODO Rewrite for new contract
 
   // Reset checking if account was switched
   useEffect(() => {

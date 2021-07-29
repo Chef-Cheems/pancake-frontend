@@ -16,6 +16,8 @@ const useCongratulateAuctionWinner = (currentAuction: Auction, bidders: Bidder[]
 
   const farmAuctionContract = useFarmAuctionContract()
 
+  // TODO Rewrite for new contract
+
   useEffect(() => {
     const checkIfWonPreviousAuction = async (previousAuctionId: number) => {
       const auctionData = await farmAuctionContract.auctions(previousAuctionId)

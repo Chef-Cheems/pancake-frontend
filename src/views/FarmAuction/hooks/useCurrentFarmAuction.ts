@@ -19,6 +19,8 @@ export const useCurrentFarmAuction = (account: string) => {
   //   [],
   // )
 
+  // TODO Rewrite for new contract
+
   // Get latest auction id and its data
   useEffect(() => {
     const fetchCurrentAuction = async () => {

@@ -10,6 +10,8 @@ import { ethersToBigNumber } from 'utils/bigNumber'
 export const FORM_ADDRESS =
   'https://docs.google.com/forms/d/e/1FAIpQLScUkwbsMWwg7L5jjGjEcmv6RsoCNhFDkV3xEpRu2KcJrr47Sw/viewform'
 
+// Sorts bidders received from smart contract by bid amount in descending order (biggest -> smallest)
+// Also ammends bidder information with getBidderInfo
 export const sortAuctionBidders = (bidders: GetBiddersPerAuctionResponse[]) =>
   [...bidders]
     .sort((a, b) => {
@@ -34,7 +36,8 @@ export const sortAuctionBidders = (bidders: GetBiddersPerAuctionResponse[]) =>
 // Determine if the auction is:
 // - Live and biddable
 // - Has been scheduled for specific future date
-// - Not annoucned yet, i.e. we should show
+// - Not annoucned yet
+// - Recently Finished/Closed
 const getAuctionStatus = (
   currentBlock: number,
   startBlock: number,
@@ -74,6 +77,7 @@ const getAuctionStartDate = async (currentBlock: number, startBlock: number) => 
   return add(new Date(), { seconds: secondsUntilStart })
 }
 
+// Get additional auction information based on the date received from smart contract
 export const processAuctionData = async (auctionId: number, auctionResponse: AuctionsResponse): Promise<Auction> => {
   const processedAuctionData = {
     ...auctionResponse,

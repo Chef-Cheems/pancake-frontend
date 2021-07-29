@@ -16,6 +16,8 @@ const useAuctionHistory = (auctionId: number) => {
 
   const farmAuctionContract = useFarmAuctionContract()
 
+  // TODO Rewrite for new contract
+
   // Get auction data
   useEffect(() => {
     const fetchAuction = async () => {

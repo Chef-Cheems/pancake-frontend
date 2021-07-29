@@ -1044,10 +1044,6 @@
   "If your bid was successful, your farm will begin at the specified time. The CAKE you bid will not be returned to you and will be added to our weekly CAKE burn.": "If your bid was successful, your farm will begin at the specified time. The CAKE you bid will not be returned to you and will be added to our weekly CAKE burn.",
   "So long as you are whitelisted, you’ll be able to participate in each new auction.": "So long as you are whitelisted, you’ll be able to participate in each new auction.",
   "If two or more projects bid the exact same CAKE amount and are contending for a spot in the winning bidders, their bids may be invalidated.": "If two or more projects bid the exact same CAKE amount and are contending for a spot in the winning bidders, their bids may be invalidated.",
-  "By participating in an Community Farm Auction, you agree to the following terms.": "By participating in an Community Farm Auction, you agree to the following terms.",
-  "A project being whitelisted for participation in an auction by PancakeSwap is in no way an endorsement or recommendation about said project.": "A project being whitelisted for participation in an auction by PancakeSwap is in no way an endorsement or recommendation about said project.",
-  "PancakeSwap strongly advise against sending funds to any projects which request donations.": "PancakeSwap strongly advise against sending funds to any projects which request donations.",
-  "PancakeSwap reserves all rights to remove any project it deems to have acted with malicious or dangerous intent from auctions at any time.": "PancakeSwap reserves all rights to remove any project it deems to have acted with malicious or dangerous intent from auctions at any time.",
   "Community Farm Auction": "Community Farm Auction",
   "Each week, qualifying projects can bid CAKE for the right to host a 7-day Farm on PancakeSwap.": "Each week, qualifying projects can bid CAKE for the right to host a 7-day Farm on PancakeSwap.",
   "Apply for a Farm/Pool": "Apply for a Farm/Pool",
@@ -1246,5 +1242,7 @@
   "Farms available": "Farms available",
   "top %num% bidders": "top %num% bidders",
   "All Whitelisted Project Wallets": "All Whitelisted Project Wallets",
-  "Search address or token": "Search address or token"
+  "Search address or token": "Search address or token",
+  "This page is for projects to bid for farms.": "This page is for projects to bid for farms.",
+  "If you’re not a whitelisted project, you won’t be able to participate, but you can still view what’s going on!": "If you’re not a whitelisted project, you won’t be able to participate, but you can still view what’s going on!"
 }
