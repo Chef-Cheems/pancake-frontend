@@ -1244,5 +1244,7 @@
   "Connected as %projectName%": "Connected as %projectName%",
   "Place bid": "Place bid",
   "Farms available": "Farms available",
-  "top %num% bidders": "top %num% bidders"
+  "top %num% bidders": "top %num% bidders",
+  "All Whitelisted Project Wallets": "All Whitelisted Project Wallets",
+  "Search address or token": "Search address or token"
 }

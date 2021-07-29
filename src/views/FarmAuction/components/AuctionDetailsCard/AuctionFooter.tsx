@@ -1,11 +1,12 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Text, Flex, Box, CardFooter, ExpandableLabel } from '@pancakeswap/uikit'
+import { Text, Flex, Box, CardFooter, ExpandableLabel, useModal, Button } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { Auction, AuctionStatus } from 'config/constants/types'
 import { whitelistedBidders } from 'config/constants/farmAuctions'
 import { CAKE_PER_WEEK_1X_FARM } from 'config'
 import { FarmSchedule } from './AuctionSchedule'
+import WhitelistedBiddersModal from '../WhitelistedBiddersModal'
 
 const FooterInner = styled(Box)`
   background-color: ${({ theme }) => theme.colors.dropdown};
@@ -15,6 +16,8 @@ const AuctionFooter: React.FC<{ auction: Auction }> = ({ auction }) => {
   const [isExpanded, setIsExpanded] = useState(false)
   const { t } = useTranslation()
   const { topLeaderboard, status } = auction
+
+  const [onShowWhitelistedBidders] = useModal(<WhitelistedBiddersModal />)
 
   const isLiveOrPendingAuction = status === AuctionStatus.Pending || status === AuctionStatus.Open
 
@@ -41,7 +44,9 @@ const AuctionFooter: React.FC<{ auction: Auction }> = ({ auction }) => {
             </Flex>
             <Flex justifyContent="space-between" width="100%" pt="8px" px="8px">
               <Text color="textSubtle">{t('Total whitelisted bidders')}</Text>
-              <Text>{whitelistedBidders.length}</Text>
+              <Button p="0" variant="text" scale="sm" onClick={onShowWhitelistedBidders}>
+                {whitelistedBidders.length}
+              </Button>
             </Flex>
             <FarmSchedule auction={auction} />
           </Flex>
