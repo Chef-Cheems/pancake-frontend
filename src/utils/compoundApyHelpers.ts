@@ -29,6 +29,8 @@ export const tokenEarnedPerThousandDollarsCompounding = ({
   return parseFloat(interestEarned.toFixed(roundingDecimals))
 }
 
+const DAYS_TO_CALCULATE_AGAINST = [1, 7, 30, 365]
+
 /**
  *
  * @param investmentAmount - amount user wants to invest in USD
@@ -65,7 +67,7 @@ export const getInterestBreakdown = ({
     aprAsDecimal = aprAfterFee / 100
   }
 
-  return [1, 7, 30, 365].map((days) => {
+  return DAYS_TO_CALCULATE_AGAINST.map((days) => {
     const daysAsDecimalOfYear = days / 365
     // Calculate the starting TOKEN balance with a dollar balance of investmentAmount.
     const principal = investmentAmount / earningTokenPrice
@@ -83,13 +85,13 @@ export const getInterestBreakdown = ({
 export const getPrincipalForInterest = (interest, apr, compoundingFrequency) => {
   const aprAsDecimal = apr / 100
   if (compoundingFrequency > 0) {
-    return [1, 7, 30, 365].map((days) => {
+    return DAYS_TO_CALCULATE_AGAINST.map((days) => {
       const apyAsDecimal = getApy(apr, compoundingFrequency, days) / 100
       const daysAsDecimalOfYear = days / 365
       return parseFloat((interest / (apyAsDecimal * daysAsDecimalOfYear)).toFixed(2))
     })
   }
-  return [1, 7, 30, 365].map((days) => {
+  return DAYS_TO_CALCULATE_AGAINST.map((days) => {
     const daysAsDecimalOfYear = days / 365
     return parseFloat((interest / (aprAsDecimal * daysAsDecimalOfYear)).toFixed(2))
   })
