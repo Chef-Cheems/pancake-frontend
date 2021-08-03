@@ -133,7 +133,7 @@ const compoundingIndexToFrequency = {
   3: 0.033333333, // once every 30 days
 }
 
-const getRoiData = ({ investment, interest, tokenPrice, isEditingRoi, expectedRoi, showBasedOneExpectedRoi }) => {
+const getRoiData = ({ investment, interest, tokenPrice, isEditingRoi, expectedRoi, showBasedOnExpectedRoi }) => {
   if (isEditingRoi) {
     const expectedTokenRoi = parseFloat(expectedRoi) / tokenPrice
     return {
@@ -142,7 +142,7 @@ const getRoiData = ({ investment, interest, tokenPrice, isEditingRoi, expectedRo
       token: Number.isNaN(expectedTokenRoi) ? 0 : expectedTokenRoi,
     }
   }
-  if (showBasedOneExpectedRoi) {
+  if (showBasedOnExpectedRoi) {
     const tokenRoi = expectedRoi / tokenPrice
     const percentage = getRoi({
       amountEarned: expectedRoi,
@@ -194,7 +194,7 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
   const [stakingTokenUSDValue, setStakingTokenUSDValue] = useState('')
   const [compoundingFrequency, setCompoundingFrequency] = useState(1)
   const [isEditingRoi, setIsEditingRoi] = useState(false)
-  const [showBasedOneExpectedRoi, setShowBasedOnExpectedRow] = useState(false)
+  const [showBasedOnExpectedRoi, setShowBasedOnExpectedRow] = useState(false)
   const [expectedRoi, setExpectedRoi] = useState('')
   const [compound, setCompound] = useState(true)
   const balanceInputRef = useRef<HTMLInputElement | null>(null)
@@ -281,14 +281,14 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
     tokenPrice: earningTokenPrice,
     isEditingRoi,
     expectedRoi,
-    showBasedOneExpectedRoi,
+    showBasedOnExpectedRoi,
   })
 
   useEffect(() => {
-    if (showBasedOneExpectedRoi) {
+    if (showBasedOnExpectedRoi) {
       setStakingTokenUSDValue(principalForExpectedRoi[stakeDuration].toFixed(2))
     }
-  }, [stakeDuration, showBasedOneExpectedRoi, principalForExpectedRoi])
+  }, [stakeDuration, showBasedOnExpectedRoi, principalForExpectedRoi])
 
   return (
     <StyledModal title={t('ROI Calculator')} onDismiss={onDismiss}>

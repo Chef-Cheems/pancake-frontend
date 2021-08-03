@@ -7,7 +7,7 @@ const DAYS_TO_CALCULATE_AGAINST = [1, 7, 30, 365]
  * @param earningTokenPrice - price of reward token
  * @param compoundFrequency - how many compounds per 1 day, e.g. 1 = one per day, 0.142857142 - once per week
  * @param performanceFee - performance fee as percentage
- * @returns interest earned expressed in tokens
+ * @returns an array of token values earned as interest, with each element representing interest earned over a different period of time (DAYS_TO_CALCULATE_AGAINST)
  */
 export const getInterestBreakdown = ({
   investmentAmount,
@@ -51,7 +51,7 @@ export const getInterestBreakdown = ({
   })
 }
 
-export const getPrincipalForInterest = (interest, apr, compoundingFrequency) => {
+export const getPrincipalForInterest = (interest: number, apr: number, compoundingFrequency: number) => {
   const aprAsDecimal = apr / 100
   if (compoundingFrequency > 0) {
     return DAYS_TO_CALCULATE_AGAINST.map((days) => {
@@ -94,7 +94,7 @@ export const getApy = (apr: number, compoundFrequency = 1, days = 365, performan
   return parseFloat((apyAsDecimal * 100).toFixed(2))
 }
 
-export const getRoi = ({ amountEarned, amountInvested }) => {
+export const getRoi = ({ amountEarned, amountInvested }: { amountEarned: number; amountInvested: number }) => {
   const percentage = (amountEarned / amountInvested) * 100
   return percentage
 }
