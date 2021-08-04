@@ -5,14 +5,12 @@ import {
   Text,
   Button,
   Flex,
-  Box,
   ButtonMenu,
   Checkbox,
   BalanceInput,
   HelpIcon,
   ButtonMenuItem,
   useTooltip,
-  ArrowDownIcon,
 } from '@pancakeswap/uikit'
 import BigNumber from 'bignumber.js'
 import { useTranslation } from 'contexts/Localization'
@@ -21,6 +19,7 @@ import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import RoiCalculatorFooter from './RoiCalculatorFooter'
 import RoiCard from './RoiCard'
 import useRoiCalculatorReducer from './useRoiCalculatorReducer'
+import AnimatedArrow from './AnimatedArrow'
 
 interface RoiCalculatorModalProps {
   onDismiss?: () => void
@@ -113,9 +112,8 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
     setTargetRoi,
   } = useRoiCalculatorReducer(stakingTokenPrice, earningTokenPrice, apr, autoCompoundFrequency, performanceFee)
 
-  const { compounding, activeCompoundingIndex, stakingDuration } = state.controls
+  const { compounding, activeCompoundingIndex, stakingDuration, mode } = state.controls
   const { stakingTokenUSDValue, stakingTokenAmount } = state.data
-  console.log('stakingTokenUSDValue', stakingTokenUSDValue)
 
   // Auto-focus input on opening modal
   useEffect(() => {
@@ -223,9 +221,7 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
             </>
           )}
         </Flex>
-        <Flex justifyContent="center" my="24px">
-          <ArrowDownIcon />
-        </Flex>
+        <AnimatedArrow mode={mode} calculatorData={state.data} />
         <Flex>
           <RoiCard
             earningTokenSymbol={earningTokenSymbol}

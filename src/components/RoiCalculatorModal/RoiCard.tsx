@@ -86,9 +86,14 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorData, s
 
   const { t } = useTranslation()
 
+  const onEnterEditing = () => {
+    setCalculatorMode(CalculatorMode.PRINCIPAL_BASED_ON_ROI)
+    setIsEditingRoi(true)
+  }
+
   const onExitRoiEditing = () => {
     // TODO eh?
-    setCalculatorMode(CalculatorMode.PRINCIPAL_BASED_ON_ROI)
+    setCalculatorMode(CalculatorMode.ROI_BASED_ON_PRINCIPAL)
     setIsEditingRoi(false)
   }
   const handleExpectedRoiChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -127,7 +132,7 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorData, s
                   %)
                 </Text>
               </Flex>
-              <PencilIcon color="primary" onClick={() => setIsEditingRoi(true)} />
+              <PencilIcon color="primary" onClick={onEnterEditing} />
             </>
           )}
         </Flex>

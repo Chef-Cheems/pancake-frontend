@@ -117,7 +117,8 @@ const roiCalculatorReducer = (
     }
     case 'setTargetRoi': {
       const data = { ...state.data, targetRoi: action.payload }
-      return { ...state, data }
+      const controls = { ...state.controls, mode: CalculatorMode.PRINCIPAL_BASED_ON_ROI }
+      return { controls, data }
     }
     default:
       return state
