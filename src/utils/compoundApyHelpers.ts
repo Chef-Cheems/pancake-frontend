@@ -51,6 +51,13 @@ export const getInterestBreakdown = ({
   })
 }
 
+/**
+ * Given target USD amount (interest)
+ * @param interest how much USD amount you aim to make
+ * @param apr APR of farm/pool
+ * @param compoundingFrequency how many compounds per 1 day, e.g. 1 = one per day, 0.142857142 - once per week
+ * @returns an array of principal values needed to reach target interest, with each element representing principal needed for a different period of time (DAYS_TO_CALCULATE_AGAINST)
+ */
 export const getPrincipalForInterest = (interest: number, apr: number, compoundingFrequency: number) => {
   const aprAsDecimal = apr / 100
   if (compoundingFrequency > 0) {
