@@ -10,6 +10,14 @@ const compoundingIndexToFrequency = {
   3: 0.033333333, // once every 30 days
 }
 
+const TOKEN_PRECISION = 10
+const USD_PRECISION = 2
+
+export enum EditingCurrency {
+  TOKEN,
+  USD,
+}
+
 export enum CalculatorMode {
   ROI_BASED_ON_PRINCIPAL,
   PRINCIPAL_BASED_ON_ROI,
@@ -22,6 +30,7 @@ export interface RoiCalculatorReducerState {
     activeCompoundingIndex: number // index of active button in ButtonMenu
     stakingDuration: number // index of active button in ButtonMenu
     mode: CalculatorMode
+    editingCurrency: EditingCurrency
   }
   data: {
     principalAsToken: string // Used as value for Inputs
@@ -42,9 +51,10 @@ const initialState: RoiCalculatorReducerState = {
     activeCompoundingIndex: 0, // active compounding selected in
     stakingDuration: 3,
     mode: CalculatorMode.ROI_BASED_ON_PRINCIPAL,
+    editingCurrency: EditingCurrency.USD,
   },
   data: {
-    principalAsToken: '',
+    principalAsToken: '0.00',
     principalAsUSD: '',
     targetRoiAsUSD: '',
     targetRoiAsTokens: BIG_ZERO,
@@ -93,7 +103,7 @@ const roiCalculatorReducer = (
         controls,
       }
     }
-    case 'setPrincipalFromUSDValue': {
+    case 'setPrincipal': {
       const { principalAsUSD, principalAsToken } = action.payload
       const data = { ...state.data, principalAsUSD, principalAsToken }
       const controls = { ...state.controls, mode: CalculatorMode.ROI_BASED_ON_PRINCIPAL }
@@ -103,6 +113,7 @@ const roiCalculatorReducer = (
       }
     }
     case 'setPrincipalForTargetRoi': {
+      // TODO can be combined with SetPrincipal? Or auto-mode switched or something?
       const { principalAsUSD, principalAsToken } = action.payload
       const data = { ...state.data, principalAsUSD, principalAsToken }
       return {
@@ -123,6 +134,12 @@ const roiCalculatorReducer = (
       const data = { ...state.data, targetRoiAsUSD, targetRoiAsTokens }
       const controls = { ...state.controls, mode: CalculatorMode.PRINCIPAL_BASED_ON_ROI }
       return { controls, data }
+    }
+    case 'toggleEditingCurrency': {
+      const currencyAfterChange =
+        state.controls.editingCurrency === EditingCurrency.USD ? EditingCurrency.TOKEN : EditingCurrency.USD
+      const controls = { ...state.controls, editingCurrency: currencyAfterChange }
+      return { ...state, controls }
     }
     default:
       return state
@@ -194,8 +211,18 @@ const useRoiCalculatorReducer = (
   }
 
   const setPrincipalFromUSDValue = (amount: string) => {
-    const principalAsToken = new BigNumber(amount).div(stakingTokenPrice)
-    dispatch({ type: 'setPrincipalFromUSDValue', payload: { principalAsUSD: amount, principalAsToken } })
+    const principalAsTokenBN = new BigNumber(amount).div(stakingTokenPrice)
+    const principalAsToken = principalAsTokenBN.gt(0) ? principalAsTokenBN.toFixed(TOKEN_PRECISION) : '0.00'
+    dispatch({ type: 'setPrincipal', payload: { principalAsUSD: amount, principalAsToken } })
+  }
+
+  const setPrincipalFromTokenValue = (amount: string) => {
+    const principalAsUsdBN = new BigNumber(amount).times(stakingTokenPrice)
+    const principalAsUsdString = principalAsUsdBN.gt(0) ? principalAsUsdBN.toFixed(USD_PRECISION) : '0.00'
+    dispatch({
+      type: 'setPrincipal',
+      payload: { principalAsUSD: principalAsUsdString, principalAsToken: amount },
+    })
   }
 
   const setStakingDuration = (stakingDurationIndex: number) => {
@@ -204,6 +231,10 @@ const useRoiCalculatorReducer = (
 
   const toggleCompounding = () => {
     dispatch({ type: 'toggleCompounding' })
+  }
+
+  const toggleEditingCurrency = () => {
+    dispatch({ type: 'toggleEditingCurrency' })
   }
 
   const setCalculatorMode = (modeToSet: CalculatorMode) => {
@@ -221,8 +252,10 @@ const useRoiCalculatorReducer = (
   return {
     state,
     setPrincipalFromUSDValue,
+    setPrincipalFromTokenValue,
     setStakingDuration,
     toggleCompounding,
+    toggleEditingCurrency,
     setCompoundingFrequency,
     setCalculatorMode,
     setTargetRoi,

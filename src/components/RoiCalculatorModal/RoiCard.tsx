@@ -5,6 +5,9 @@ import { getRoi } from 'utils/compoundApyHelpers'
 import { useTranslation } from 'contexts/Localization'
 import { CalculatorMode, RoiCalculatorReducerState } from './useRoiCalculatorReducer'
 
+const MILLION = 1000000
+const TRILLION = 1000000000000
+
 const RoiCardWrapper = styled(Box)`
   background: linear-gradient(180deg, #53dee9, #7645d9);
   padding: 1px;
@@ -32,6 +35,38 @@ const RoiInputContainer = styled(Box)`
     left: 16px;
     top: 8px;
   }
+`
+
+const RoiDisplayContainer = styled(Flex)`
+  max-width: 82%;
+  margin-right: 8px;
+`
+
+const RoiDollarAmount = styled(Text)<{ fadeOut: boolean }>`
+  position: relative;
+  overflow-x: auto;
+  &::-webkit-scrollbar {
+    height: 0px;
+  }
+
+  ${({ fadeOut, theme }) =>
+    fadeOut &&
+    `
+      &:after {
+        background: linear-gradient(
+          to right,
+          ${theme.colors.background}00,
+          ${theme.colors.background}E6
+        );
+        content: '';
+        height: 100%;
+        pointer-events: none;
+        position: absolute;
+        right: 0;
+        top: 0;
+        width: 40px;
+      }
+  `}
 `
 
 const getRoiData = ({ investment, interest, tokenPrice, isEditingRoi, expectedRoi, showBasedOnExpectedRoi }) => {
@@ -92,8 +127,6 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorState, 
     }
   }, [mode])
 
-  // TODO isEditingRoi is just CalculatorMode.PRINCIPAL_?
-
   const onEnterEditing = () => {
     setCalculatorMode(CalculatorMode.PRINCIPAL_BASED_ON_ROI)
   }
@@ -131,15 +164,18 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorState, 
             </>
           ) : (
             <>
-              <Flex alignItems="center" onClick={onEnterEditing}>
-                <Text fontSize="24px" bold mr="8px">
-                  $ {roiUSD.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+              <RoiDisplayContainer onClick={onEnterEditing}>
+                {/* Dollar sign is separate cause its not supposed to scroll with a number if number is huge */}
+                <Text fontSize="24px" bold>
+                  $
                 </Text>
-                <Text color="textSubtle">
-                  ({roiPercentage.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                  %)
-                </Text>
-              </Flex>
+                <RoiDollarAmount fontSize="24px" bold fadeOut={roiUSD > TRILLION}>
+                  {roiUSD.toLocaleString('en', {
+                    minimumFractionDigits: roiUSD > MILLION ? 0 : 2,
+                    maximumFractionDigits: roiUSD > MILLION ? 0 : 2,
+                  })}
+                </RoiDollarAmount>
+              </RoiDisplayContainer>
               <IconButton scale="sm" variant="text" onClick={onEnterEditing}>
                 <PencilIcon color="primary" />
               </IconButton>
@@ -152,7 +188,9 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorState, 
           </Text>
         ) : (
           <Text fontSize="12px" color="textSubtle">
-            ~ {roiTokens} {earningTokenSymbol}
+            ~ {roiTokens} {earningTokenSymbol} (
+            {roiPercentage.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+            %)
           </Text>
         )}
       </RoiCardInner>

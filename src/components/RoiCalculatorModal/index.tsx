@@ -18,7 +18,7 @@ import { getBalanceNumber } from 'utils/formatBalance'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import RoiCalculatorFooter from './RoiCalculatorFooter'
 import RoiCard from './RoiCard'
-import useRoiCalculatorReducer from './useRoiCalculatorReducer'
+import useRoiCalculatorReducer, { EditingCurrency } from './useRoiCalculatorReducer'
 import AnimatedArrow from './AnimatedArrow'
 
 interface RoiCalculatorModalProps {
@@ -65,22 +65,6 @@ const FullWidthButtonMenu = styled(ButtonMenu)<{ disabled?: boolean }>`
   opacity: ${({ disabled }) => (disabled ? 0.5 : 1)};
 `
 
-const InvestmentInputContainer = styled.div`
-  position: relative;
-
-  & input {
-    padding-right: 34px;
-  }
-
-  &:before {
-    position: absolute;
-    content: 'USD';
-    color: ${({ theme }) => theme.colors.textSubtle};
-    right: 16px;
-    top: 21px;
-  }
-`
-
 const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
   onDismiss,
   earningTokenPrice,
@@ -105,14 +89,16 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
   const {
     state,
     setPrincipalFromUSDValue,
+    setPrincipalFromTokenValue,
     setStakingDuration,
     toggleCompounding,
+    toggleEditingCurrency,
     setCompoundingFrequency,
     setCalculatorMode,
     setTargetRoi,
   } = useRoiCalculatorReducer(stakingTokenPrice, earningTokenPrice, apr, autoCompoundFrequency, performanceFee)
 
-  const { compounding, activeCompoundingIndex, stakingDuration } = state.controls
+  const { compounding, activeCompoundingIndex, stakingDuration, editingCurrency } = state.controls
   const { principalAsUSD, principalAsToken } = state.data
 
   // Auto-focus input on opening modal
@@ -121,8 +107,6 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
       balanceInputRef.current.focus()
     }
   }, [])
-
-  const principalAsTokenBN = new BigNumber(principalAsToken)
 
   const { targetRef, tooltip, tooltipVisible } = useTooltip(
     isFarm
@@ -134,6 +118,13 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
     { placement: 'top-end', tooltipOffset: [20, 10] },
   )
 
+  const editingUnit = editingCurrency === EditingCurrency.TOKEN ? stakingTokenSymbol : 'USD'
+  const editingValue = editingCurrency === EditingCurrency.TOKEN ? principalAsToken : principalAsUSD
+  const conversionUnit = editingCurrency === EditingCurrency.TOKEN ? 'USD' : stakingTokenSymbol
+  const conversionValue = editingCurrency === EditingCurrency.TOKEN ? principalAsUSD : principalAsToken
+  const onUserInput = editingCurrency === EditingCurrency.TOKEN ? setPrincipalFromTokenValue : setPrincipalFromUSDValue
+
+  // TODO: Check balance input numeric input mode on mobile
   return (
     <StyledModal title={t('ROI Calculator')} onDismiss={onDismiss} headerBackground="gradients.cardHeader">
       <ScrollableContainer>
@@ -141,17 +132,15 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
           <Text color="secondary" bold fontSize="12px" textTransform="uppercase">
             {t('%asset% staked', { asset: stakingTokenSymbol })}
           </Text>
-          <InvestmentInputContainer>
-            <BalanceInput
-              currencyValue={`${
-                principalAsTokenBN.gt(0) ? principalAsTokenBN.toFixed(10) : '0.0'
-              } ${stakingTokenSymbol}`}
-              innerRef={balanceInputRef}
-              placeholder="0.0"
-              value={principalAsUSD}
-              onUserInput={setPrincipalFromUSDValue}
-            />
-          </InvestmentInputContainer>
+          <BalanceInput
+            currencyValue={`${conversionValue} ${conversionUnit}`}
+            innerRef={balanceInputRef}
+            placeholder="0.00"
+            value={editingValue}
+            unit={editingUnit}
+            onUserInput={onUserInput}
+            switchEditingUnits={toggleEditingCurrency}
+          />
           <Flex justifyContent="space-between" mt="8px">
             <Button
               scale="xs"
