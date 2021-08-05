@@ -102,6 +102,9 @@ export const getApy = (apr: number, compoundFrequency = 1, days = 365, performan
 }
 
 export const getRoi = ({ amountEarned, amountInvested }: { amountEarned: number; amountInvested: number }) => {
+  if (amountInvested === 0) {
+    return 0
+  }
   const percentage = (amountEarned / amountInvested) * 100
   return percentage
 }

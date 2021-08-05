@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
+import React, { useRef, useEffect } from 'react'
 import styled from 'styled-components'
-import { Box, Flex, Text, Input, CheckmarkIcon, PencilIcon } from '@pancakeswap/uikit'
+import { Box, Flex, Text, Input, CheckmarkIcon, PencilIcon, IconButton } from '@pancakeswap/uikit'
 import { getRoi } from 'utils/compoundApyHelpers'
 import { useTranslation } from 'contexts/Localization'
 import { CalculatorMode, RoiCalculatorReducerState } from './useRoiCalculatorReducer'
@@ -19,12 +19,11 @@ const RoiCardInner = styled(Box)`
   background: ${({ theme }) => theme.colors.gradients.bubblegum};
 `
 
-const RoiInputContainer = styled(Flex)`
-  margin: 8px 0;
+const RoiInputContainer = styled(Box)`
   position: relative;
-  max-width: 80%;
   & > input {
     padding-left: 28px;
+    max-width: 70%;
   }
   &:before {
     position: absolute;
@@ -75,26 +74,32 @@ const getRoiData = ({ investment, interest, tokenPrice, isEditingRoi, expectedRo
 
 interface RoiCardProps {
   earningTokenSymbol: string
-  calculatorData: RoiCalculatorReducerState['data']
+  calculatorState: RoiCalculatorReducerState
   setTargetRoi: (amount: string) => void
   setCalculatorMode: (mode: CalculatorMode) => void
 }
 
-const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorData, setTargetRoi, setCalculatorMode }) => {
-  const [isEditingRoi, setIsEditingRoi] = useState(false)
-  const { targetRoi, roiUSD, roiTokens, roiPercentage } = calculatorData
+const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorState, setTargetRoi, setCalculatorMode }) => {
+  const inputRef = useRef<HTMLInputElement | null>(null)
+  const { targetRoiAsUSD, targetRoiAsTokens, roiUSD, roiTokens, roiPercentage } = calculatorState.data
+  const { mode } = calculatorState.controls
 
   const { t } = useTranslation()
 
+  useEffect(() => {
+    if (mode === CalculatorMode.PRINCIPAL_BASED_ON_ROI && inputRef.current) {
+      inputRef.current.focus()
+    }
+  }, [mode])
+
+  // TODO isEditingRoi is just CalculatorMode.PRINCIPAL_?
+
   const onEnterEditing = () => {
     setCalculatorMode(CalculatorMode.PRINCIPAL_BASED_ON_ROI)
-    setIsEditingRoi(true)
   }
 
   const onExitRoiEditing = () => {
-    // TODO eh?
     setCalculatorMode(CalculatorMode.ROI_BASED_ON_PRINCIPAL)
-    setIsEditingRoi(false)
   }
   const handleExpectedRoiChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTargetRoi(event.currentTarget.value)
@@ -105,25 +110,28 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorData, s
         <Text fontSize="12px" color="secondary" bold textTransform="uppercase">
           {t('ROI at current rates')}
         </Text>
-        <Flex justifyContent="space-between">
-          {isEditingRoi ? (
+        <Flex justifyContent="space-between" mt="4px" height="36px">
+          {mode === CalculatorMode.PRINCIPAL_BASED_ON_ROI ? (
             <>
               <RoiInputContainer>
                 <Input
+                  ref={inputRef}
                   type="number"
                   inputMode="decimal"
                   pattern="\d*"
                   scale="sm"
-                  value={targetRoi}
+                  value={targetRoiAsUSD}
                   placeholder="0.0"
                   onChange={handleExpectedRoiChange}
                 />
               </RoiInputContainer>
-              <CheckmarkIcon color="primary" onClick={onExitRoiEditing} />
+              <IconButton scale="sm" variant="text" onClick={onExitRoiEditing}>
+                <CheckmarkIcon color="primary" />
+              </IconButton>
             </>
           ) : (
             <>
-              <Flex alignItems="center">
+              <Flex alignItems="center" onClick={onEnterEditing}>
                 <Text fontSize="24px" bold mr="8px">
                   $ {roiUSD.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                 </Text>
@@ -132,13 +140,21 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorData, s
                   %)
                 </Text>
               </Flex>
-              <PencilIcon color="primary" onClick={onEnterEditing} />
+              <IconButton scale="sm" variant="text" onClick={onEnterEditing}>
+                <PencilIcon color="primary" />
+              </IconButton>
             </>
           )}
         </Flex>
-        <Text fontSize="12px" color="textSubtle">
-          ~ {roiTokens} {earningTokenSymbol}
-        </Text>
+        {mode === CalculatorMode.PRINCIPAL_BASED_ON_ROI ? (
+          <Text fontSize="12px" color="textSubtle">
+            ~ {targetRoiAsTokens.toNumber().toLocaleString()} {earningTokenSymbol}
+          </Text>
+        ) : (
+          <Text fontSize="12px" color="textSubtle">
+            ~ {roiTokens} {earningTokenSymbol}
+          </Text>
+        )}
       </RoiCardInner>
     </RoiCardWrapper>
   )

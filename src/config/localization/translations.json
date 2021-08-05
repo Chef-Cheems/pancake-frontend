@@ -1323,10 +1323,9 @@
   "My Balance": "My Balance",
   "Staked for": "Staked for",
   "Compounding every": "Compounding every",
-  "12H": "12H",
   "1D": "1D",
   "7D": "7D",
+  "14D": "14D",
   "30D": "30D",
-  "1Y": "1Y",
-  "Token value": "Token value"
+  "1Y": "1Y"
 }

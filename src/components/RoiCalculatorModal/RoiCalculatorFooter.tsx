@@ -11,22 +11,19 @@ const Footer = styled(Flex)`
 
 const BulletList = styled.ul`
   list-style-type: none;
-  margin: 0;
+  margin-top: 16px;
   padding: 0;
-
   li {
     margin: 0;
     padding: 0;
   }
-
   li::before {
     content: '•';
     margin-right: 4px;
+    color: ${({ theme }) => theme.colors.textSubtle};
   }
-
   li::marker {
     font-size: 12px;
-    color: ${({ theme }) => theme.colors.textSubtle};
   }
 `
 
@@ -71,14 +68,16 @@ const RoiCalculatorFooter: React.FC<RoiCalculatorFooterProps> = ({
     { placement: 'top-end', tooltipOffset: [20, 10] },
   )
 
+  const gridRowCount = isFarm ? 4 : 2
+
   return (
     <Footer p="16px" flexDirection="column">
       <ExpandableLabel expanded={isExpanded} onClick={() => setIsExpanded((prev) => !prev)}>
         {isExpanded ? t('Hide') : t('Details')}
       </ExpandableLabel>
       {isExpanded && (
-        <Box p="8px">
-          <Grid gridTemplateColumns="2.5fr 1fr" gridTemplateRows="repeat(4, auto)">
+        <Box px="8px">
+          <Grid gridTemplateColumns="2.5fr 1fr" gridRowGap="8px" gridTemplateRows={`repeat(${gridRowCount}, auto)`}>
             {isFarm && (
               <>
                 <Text color="textSubtle" small>
@@ -150,7 +149,7 @@ const RoiCalculatorFooter: React.FC<RoiCalculatorFooterProps> = ({
               </li>
             )}
           </BulletList>
-          <Flex justifyContent="center">
+          <Flex justifyContent="center" mt="24px">
             <LinkExternal href={linkHref}>{linkLabel}</LinkExternal>
           </Flex>
         </Box>
