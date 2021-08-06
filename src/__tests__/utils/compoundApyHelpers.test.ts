@@ -1,4 +1,4 @@
-import { getInterestBreakdown, getRoi } from 'utils/compoundApyHelpers'
+import { getInterestBreakdown, getRoi, getPrincipalForInterest } from 'utils/compoundApyHelpers'
 
 const TWICE_PER_DAY = 2
 const FIVE_THOUSAND_TIMES_PER_DAY = 5000
@@ -61,4 +61,47 @@ it.each([
   [{ amountEarned: 8572.84, amountInvested: 20000 }, 42.864200000000004],
 ])('calculate roi % with values %o', ({ amountEarned, amountInvested }, expected) => {
   expect(getRoi({ amountEarned, amountInvested })).toEqual(expected)
+})
+
+it('reverse calculations match', () => {
+  // Given (assume this is CAKE-CAKE syrup pool)
+  const earningTokenPrice = 17.12
+  const stakingTokenPrice = 17.12
+  const apr = 68.43
+  const stakingDays = 30
+  const compoundFrequency = 1
+  const performanceFee = 0
+
+  // Expected
+  const expectedROI = 4857.9712
+
+  // TODO: Also check same with performance feee
+
+  const principal = 84047.16
+  // Calculate ROI based on principal
+  const interestBreakdown = getInterestBreakdown({
+    investmentAmount: principal,
+    apr,
+    earningTokenPrice,
+    compoundFrequency,
+    performanceFee,
+  })
+  const roiTokens30days = interestBreakdown[2]
+  const roiUSD30days = roiTokens30days * earningTokenPrice
+  const roiPercentage30days = getRoi({
+    amountEarned: roiTokens30days,
+    amountInvested: principal,
+  })
+  expect(roiUSD30days).toBe(expectedROI) // This is correct, trust this
+
+  // Calculate principal based on ROI
+  const principalForExpectedRoi = getPrincipalForInterest(expectedROI, apr, compoundFrequency)
+  const principalUSD = principalForExpectedRoi[2]
+  // in code this is BN but whatever
+  const principalToken = principalUSD / stakingTokenPrice
+  const roiPercentage = getRoi({
+    amountEarned: expectedROI,
+    amountInvested: principalUSD,
+  })
+  expect(principalUSD).toBe(principal)
 })
