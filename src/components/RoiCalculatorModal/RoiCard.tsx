@@ -116,7 +116,7 @@ interface RoiCardProps {
 
 const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorState, setTargetRoi, setCalculatorMode }) => {
   const inputRef = useRef<HTMLInputElement | null>(null)
-  const { targetRoiAsUSD, targetRoiAsTokens, roiUSD, roiTokens, roiPercentage } = calculatorState.data
+  const { roiUSD, roiTokens, roiPercentage } = calculatorState.data
   const { mode } = calculatorState.controls
 
   const { t } = useTranslation()
@@ -126,6 +126,8 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorState, 
       inputRef.current.focus()
     }
   }, [mode])
+
+  // TODO: so um... roi can be target roi perhaps, no need for special thing
 
   const onEnterEditing = () => {
     setCalculatorMode(CalculatorMode.PRINCIPAL_BASED_ON_ROI)
@@ -153,7 +155,7 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorState, 
                   inputMode="decimal"
                   pattern="\d*"
                   scale="sm"
-                  value={targetRoiAsUSD}
+                  value={roiUSD}
                   placeholder="0.0"
                   onChange={handleExpectedRoiChange}
                 />
@@ -182,17 +184,11 @@ const RoiCard: React.FC<RoiCardProps> = ({ earningTokenSymbol, calculatorState, 
             </>
           )}
         </Flex>
-        {mode === CalculatorMode.PRINCIPAL_BASED_ON_ROI ? (
-          <Text fontSize="12px" color="textSubtle">
-            ~ {targetRoiAsTokens.toNumber().toLocaleString()} {earningTokenSymbol}
-          </Text>
-        ) : (
-          <Text fontSize="12px" color="textSubtle">
-            ~ {roiTokens} {earningTokenSymbol} (
-            {roiPercentage.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-            %)
-          </Text>
-        )}
+        <Text fontSize="12px" color="textSubtle">
+          ~ {roiTokens} {earningTokenSymbol} (
+          {roiPercentage.toLocaleString('en', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+          %)
+        </Text>
       </RoiCardInner>
     </RoiCardWrapper>
   )

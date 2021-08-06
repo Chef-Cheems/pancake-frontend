@@ -35,8 +35,6 @@ export interface RoiCalculatorReducerState {
   data: {
     principalAsToken: string // Used as value for Inputs
     principalAsUSD: string // Used as value for Inputs
-    targetRoiAsUSD: string
-    targetRoiAsTokens: BigNumber
     interestBreakdown: number[]
     roiUSD: number
     roiTokens: number
@@ -56,8 +54,6 @@ const initialState: RoiCalculatorReducerState = {
   data: {
     principalAsToken: '0.00',
     principalAsUSD: '',
-    targetRoiAsUSD: '',
-    targetRoiAsTokens: BIG_ZERO,
     interestBreakdown: [0, 0, 0, 0],
     roiUSD: 0,
     roiTokens: 0,
@@ -114,15 +110,21 @@ const roiCalculatorReducer = (
     }
     case 'setPrincipalForTargetRoi': {
       // TODO can be combined with SetPrincipal? Or auto-mode switched or something?
-      const { principalAsUSD, principalAsToken } = action.payload
-      const data = { ...state.data, principalAsUSD, principalAsToken }
+      const { principalAsUSD, principalAsToken, roiPercentage } = action.payload
+      const data = { ...state.data, principalAsUSD, principalAsToken, roiPercentage }
       return {
         ...state,
         data,
       }
     }
     case 'setCalculatorMode': {
-      const controls = { ...state.controls, mode: action.payload }
+      const mode = action.payload
+      const controls = { ...state.controls, mode }
+      if (mode === CalculatorMode.PRINCIPAL_BASED_ON_ROI) {
+        const roiUSD = parseFloat(state.data.roiUSD.toFixed(USD_PRECISION))
+        const data = { ...state.data, roiUSD }
+        return { controls, data }
+      }
       return { ...state, controls }
     }
     case 'setRoi': {
@@ -130,8 +132,8 @@ const roiCalculatorReducer = (
       return { ...state, data }
     }
     case 'setTargetRoi': {
-      const { targetRoiAsUSD, targetRoiAsTokens } = action.payload
-      const data = { ...state.data, targetRoiAsUSD, targetRoiAsTokens }
+      const { roiUSD, roiTokens } = action.payload
+      const data = { ...state.data, roiUSD, roiTokens }
       const controls = { ...state.controls, mode: CalculatorMode.PRINCIPAL_BASED_ON_ROI }
       return { controls, data }
     }
@@ -154,7 +156,7 @@ const useRoiCalculatorReducer = (
   performanceFee: number,
 ) => {
   const [state, dispatch] = useReducer(roiCalculatorReducer, initialState)
-  const { principalAsUSD, targetRoiAsUSD } = state.data
+  const { principalAsUSD, roiUSD } = state.data
   const { compounding, compoundingFrequency, stakingDuration, mode } = state.controls
 
   // If pool is auto-compounding set state's compounding frequency to this pool's auto-compound frequency
@@ -166,45 +168,51 @@ const useRoiCalculatorReducer = (
 
   // Calculates ROI whenever related values change
   useEffect(() => {
-    const principalAsUSDAsNumber = parseFloat(principalAsUSD)
-    const compoundFrequency = compounding ? compoundingFrequency : 0
-    const interestBreakdown = getInterestBreakdown({
-      investmentAmount: principalAsUSDAsNumber,
-      apr,
-      earningTokenPrice,
-      compoundFrequency,
-      performanceFee,
-    })
-    const hasInterest = !Number.isNaN(interestBreakdown[stakingDuration])
-    const roiTokens = hasInterest ? interestBreakdown[stakingDuration] : 0
-    const roiUSD = hasInterest ? roiTokens * earningTokenPrice : 0
-    const roiPercentage = hasInterest
-      ? getRoi({
-          amountEarned: roiUSD,
-          amountInvested: principalAsUSDAsNumber,
-        })
-      : 0
-    dispatch({ type: 'setRoi', payload: { roiUSD, roiTokens, roiPercentage } })
-  }, [principalAsUSD, apr, stakingDuration, earningTokenPrice, performanceFee, compounding, compoundingFrequency])
+    if (mode === CalculatorMode.ROI_BASED_ON_PRINCIPAL) {
+      const principalAsUSDAsNumber = parseFloat(principalAsUSD)
+      const compoundFrequency = compounding ? compoundingFrequency : 0
+      const interestBreakdown = getInterestBreakdown({
+        investmentAmount: principalAsUSDAsNumber,
+        apr,
+        earningTokenPrice,
+        compoundFrequency,
+        performanceFee,
+      })
+      const hasInterest = !Number.isNaN(interestBreakdown[stakingDuration])
+      const roiTokens = hasInterest ? interestBreakdown[stakingDuration] : 0
+      const roiAsUSD = hasInterest ? roiTokens * earningTokenPrice : 0
+      const roiPercentage = hasInterest
+        ? getRoi({
+            amountEarned: roiAsUSD,
+            amountInvested: principalAsUSDAsNumber,
+          })
+        : 0
+      dispatch({ type: 'setRoi', payload: { roiUSD: roiAsUSD, roiTokens, roiPercentage } })
+    }
+  }, [principalAsUSD, apr, stakingDuration, earningTokenPrice, performanceFee, compounding, compoundingFrequency, mode])
 
   // Sets principal based on expected ROI value
   useEffect(() => {
     if (mode === CalculatorMode.PRINCIPAL_BASED_ON_ROI) {
-      const principalForExpectedRoi = getPrincipalForInterest(
-        parseFloat(targetRoiAsUSD),
-        apr,
-        compounding ? compoundingFrequency : 0,
-      )
+      const principalForExpectedRoi = getPrincipalForInterest(roiUSD, apr, compounding ? compoundingFrequency : 0)
       const principalUSD = !Number.isNaN(principalForExpectedRoi[stakingDuration])
         ? principalForExpectedRoi[stakingDuration]
         : 0
       const principalToken = new BigNumber(principalUSD).div(stakingTokenPrice)
+      const roiPercentage = getRoi({
+        amountEarned: roiUSD,
+        amountInvested: principalUSD,
+      })
       dispatch({
         type: 'setPrincipalForTargetRoi',
-        payload: { principalAsUSD: principalUSD.toFixed(2), principalAsToken: principalToken.toFixed(2) },
+        payload: {
+          principalAsUSD: principalUSD.toFixed(USD_PRECISION),
+          principalAsToken: principalToken.toFixed(TOKEN_PRECISION),
+          roiPercentage,
+        },
       })
     }
-  }, [stakingDuration, apr, compounding, compoundingFrequency, mode, targetRoiAsUSD, stakingTokenPrice])
+  }, [stakingDuration, apr, compounding, compoundingFrequency, mode, roiUSD, stakingTokenPrice])
 
   const setCompoundingFrequency = (index: number) => {
     dispatch({ type: 'setCompoundingFrequency', payload: { index } })
@@ -245,7 +253,7 @@ const useRoiCalculatorReducer = (
     const targetRoiAsTokens = new BigNumber(amount).div(stakingTokenPrice)
     dispatch({
       type: 'setTargetRoi',
-      payload: { targetRoiAsUSD: amount, targetRoiAsTokens: targetRoiAsTokens.isNaN() ? BIG_ZERO : targetRoiAsTokens },
+      payload: { roiUSD: amount, roiTokens: targetRoiAsTokens.isNaN() ? 0 : targetRoiAsTokens.toNumber() },
     })
   }
 
