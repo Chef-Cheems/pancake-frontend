@@ -21,7 +21,6 @@ interface TitleProps extends FlexProps {
 
 const BaseCardHeader = styled(Flex).attrs({ alignItems: 'center', justifyContent: 'space-between' })<{ bgKey: string }>`
   background: ${({ theme, bgKey }) => (bgKey === 'transparent' ? 'transparent' : get(theme, bgKey))};
-  border-radius: 16px 16px 0 0;
 `
 
 const Title: React.FC<TitleProps> = ({ icon, children }) => (

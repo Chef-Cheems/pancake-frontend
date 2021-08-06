@@ -1,7 +1,7 @@
 import React, { useEffect, useRef } from 'react'
 import styled from 'styled-components'
 import { useCountUp } from 'react-countup'
-import { CardBody, Flex, Skeleton, Text, TooltipText, useTooltip } from '@pancakeswap/uikit'
+import { Card, CardBody, Flex, Skeleton, Text, TooltipText, useTooltip } from '@pancakeswap/uikit'
 import { ROUND_BUFFER } from 'state/predictions/config'
 import { useTranslation } from 'contexts/Localization'
 import { NodeRound, NodeLedger, BetPosition } from 'state/types'
@@ -12,7 +12,6 @@ import { formatUsdv2, getHasRoundFailed, getPriceDifference } from '../../helper
 import PositionTag from '../PositionTag'
 import { RoundResultBox, LockPriceRow, PrizePoolRow } from '../RoundResult'
 import MultiplierArrow from './MultiplierArrow'
-import Card from './Card'
 import { LiveRoundCardHeader } from './CardHeader'
 import CanceledRoundCard from './CanceledRoundCard'
 
@@ -24,16 +23,6 @@ interface LiveRoundCardProps {
   bullMultiplier: string
   bearMultiplier: string
 }
-
-const GradientBorder = styled.div`
-  background: linear-gradient(180deg, #53dee9 0%, #7645d9 100%);
-  border-radius: 16px;
-  padding: 1px;
-`
-
-const GradientCard = styled(Card)`
-  background: ${({ theme }) => theme.colors.gradients.bubblegum};
-`
 
 const LiveRoundCard: React.FC<LiveRoundCardProps> = ({
   round,
@@ -76,45 +65,43 @@ const LiveRoundCard: React.FC<LiveRoundCardProps> = ({
   }
 
   return (
-    <GradientBorder>
-      <GradientCard>
-        <LiveRoundCardHeader epoch={round.epoch} timestamp={closeTimestamp + ROUND_BUFFER} />
-        <RoundProgress variant="flat" scale="sm" lockTimestamp={lockTimestamp} closeTimestamp={closeTimestamp} />
-        <CardBody p="16px">
-          <MultiplierArrow
-            betAmount={betAmount}
-            multiplier={bullMultiplier}
-            hasEntered={hasEnteredUp}
-            isActive={isBull}
-          />
-          <RoundResultBox betPosition={isBull ? BetPosition.BULL : BetPosition.BEAR}>
-            <Text color="textSubtle" fontSize="12px" bold textTransform="uppercase" mb="8px">
-              {t('Last Price')}
-            </Text>
-            <Flex alignItems="center" justifyContent="space-between" mb="16px" height="36px">
-              <div ref={targetRef}>
-                <TooltipText bold color={priceColor} fontSize="24px" style={{ minHeight: '36px' }}>
-                  {price.gt(0) ? `$${countUp}` : <Skeleton height="36px" width="94px" />}
-                </TooltipText>
-              </div>
-              <PositionTag betPosition={isBull ? BetPosition.BULL : BetPosition.BEAR}>
-                {formatUsdv2(priceDifference)}
-              </PositionTag>
-            </Flex>
-            {lockPrice && <LockPriceRow lockPrice={lockPrice} />}
-            <PrizePoolRow totalAmount={totalAmount} />
-          </RoundResultBox>
-          <MultiplierArrow
-            betAmount={betAmount}
-            multiplier={bearMultiplier}
-            betPosition={BetPosition.BEAR}
-            hasEntered={hasEnteredDown}
-            isActive={!isBull}
-          />
-        </CardBody>
-      </GradientCard>
+    <Card isActive>
+      <LiveRoundCardHeader epoch={round.epoch} timestamp={closeTimestamp + ROUND_BUFFER} />
+      <RoundProgress variant="flat" scale="sm" lockTimestamp={lockTimestamp} closeTimestamp={closeTimestamp} />
+      <CardBody p="16px">
+        <MultiplierArrow
+          betAmount={betAmount}
+          multiplier={bullMultiplier}
+          hasEntered={hasEnteredUp}
+          isActive={isBull}
+        />
+        <RoundResultBox betPosition={isBull ? BetPosition.BULL : BetPosition.BEAR}>
+          <Text color="textSubtle" fontSize="12px" bold textTransform="uppercase" mb="8px">
+            {t('Last Price')}
+          </Text>
+          <Flex alignItems="center" justifyContent="space-between" mb="16px" height="36px">
+            <div ref={targetRef}>
+              <TooltipText bold color={priceColor} fontSize="24px" style={{ minHeight: '36px' }}>
+                {price.gt(0) ? `$${countUp}` : <Skeleton height="36px" width="94px" />}
+              </TooltipText>
+            </div>
+            <PositionTag betPosition={isBull ? BetPosition.BULL : BetPosition.BEAR}>
+              {formatUsdv2(priceDifference)}
+            </PositionTag>
+          </Flex>
+          {lockPrice && <LockPriceRow lockPrice={lockPrice} />}
+          <PrizePoolRow totalAmount={totalAmount} />
+        </RoundResultBox>
+        <MultiplierArrow
+          betAmount={betAmount}
+          multiplier={bearMultiplier}
+          betPosition={BetPosition.BEAR}
+          hasEntered={hasEnteredDown}
+          isActive={!isBull}
+        />
+      </CardBody>
       {tooltipVisible && tooltip}
-    </GradientBorder>
+    </Card>
   )
 }
 
