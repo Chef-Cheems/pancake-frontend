@@ -1,4 +1,5 @@
 import React from 'react'
+import styled from 'styled-components'
 import { Flex, TooltipText, IconButton, useModal, CalculateIcon, Skeleton, useTooltip } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import Balance from 'components/Balance'
@@ -8,6 +9,10 @@ import { getAprData } from 'views/Pools/helpers'
 import { getAddress } from 'utils/addressHelpers'
 import BigNumber from 'bignumber.js'
 import { BIG_ZERO } from 'utils/bigNumber'
+
+const ApyLabelContainer = styled(Flex)`
+  cursor: pointer;
+`
 
 interface AprRowProps {
   pool: Pool
@@ -55,19 +60,19 @@ const AprRow: React.FC<AprRowProps> = ({ pool, stakedBalance, performanceFee = 0
       {isFinished || !apr ? (
         <Skeleton width="82px" height="32px" />
       ) : (
-        <Flex alignItems="center">
+        <ApyLabelContainer alignItems="center" onClick={onPresentApyModal}>
           <Balance
             fontSize="16px"
             isDisabled={isFinished}
             value={earningsPercentageToDisplay}
             decimals={2}
             unit="%"
-            bold
+            onClick={onPresentApyModal}
           />
-          <IconButton onClick={onPresentApyModal} variant="text" scale="sm">
+          <IconButton variant="text" scale="sm">
             <CalculateIcon color="textSubtle" width="18px" />
           </IconButton>
-        </Flex>
+        </ApyLabelContainer>
       )}
     </Flex>
   )

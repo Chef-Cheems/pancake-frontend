@@ -1,4 +1,4 @@
-import { getInterestBreakdown, getRoi, getPrincipalForInterest } from 'utils/compoundApyHelpers'
+import { getInterestBreakdown, getRoi, getPrincipalForInterest, getApy } from 'utils/compoundApyHelpers'
 
 const TWICE_PER_DAY = 2
 const FIVE_THOUSAND_TIMES_PER_DAY = 5000
@@ -32,7 +32,7 @@ it.each([
   ],
   [
     { investmentAmount: 55000, apr: 120, earningTokenPrice: 5.5, performanceFee: 2, compoundFrequency: 1 },
-    [32.22, 227.73, 1013.12, 22352.61],
+    [32.22, 227.77, 1014.1, 22673.17],
   ],
   [
     {
@@ -42,7 +42,7 @@ it.each([
       performanceFee: 2,
       compoundFrequency: FIVE_THOUSAND_TIMES_PER_DAY,
     },
-    [32.27, 228.1, 1014.83, 22413.81],
+    [32.27, 228.15, 1015.85, 22737.13],
   ],
 ])(
   'calculate cake earned with values %o',
@@ -63,45 +63,60 @@ it.each([
   expect(getRoi({ amountEarned, amountInvested })).toEqual(expected)
 })
 
-it('reverse calculations match', () => {
-  // Given (assume this is CAKE-CAKE syrup pool)
-  const earningTokenPrice = 17.12
-  const stakingTokenPrice = 17.12
-  const apr = 68.43
-  const stakingDays = 30
-  const compoundFrequency = 1
-  const performanceFee = 0
+it.each`
+  apr      | compoundFrequency  | performanceFee | days   | expectedApy
+  ${68.43} | ${0}               | ${0}           | ${365} | ${0.6843}
+  ${68.43} | ${1}               | ${0}           | ${365} | ${0.9811}
+  ${68.43} | ${ONCE_PER_7_DAYS} | ${0}           | ${365} | ${0.9736}
+  ${68.43} | ${1}               | ${2}           | ${365} | ${0.9615}
+  ${68.43} | ${1}               | ${100}         | ${365} | ${0}
+  ${68.43} | ${1}               | ${0}           | ${30}  | ${0.0578}
+  ${68.43} | ${1}               | ${2}           | ${30}  | ${0.0566}
+  ${68.43} | ${1}               | ${0}           | ${1}   | ${0.00187}
+`(
+  'getApy returns $expectedApy for apr=$apr, compoundFrequency=$compoundFrequency, days=$days, performanceFee=$performanceFee',
+  ({ apr, compoundFrequency, performanceFee, days, expectedApy }) => {
+    const DIFFERENCE_THRESHOLD_IN_PERCENTS = 0.0001 // 0.01% error is OK
+    const apy = getApy(apr, compoundFrequency, days, performanceFee)
+    const difference = Math.abs(apy - expectedApy)
+    expect(difference).toBeLessThanOrEqual(DIFFERENCE_THRESHOLD_IN_PERCENTS)
+  },
+)
 
-  // Expected
-  const expectedROI = 4857.9712
-
-  // TODO: Also check same with performance feee
-
-  const principal = 84047.16
-  // Calculate ROI based on principal
-  const interestBreakdown = getInterestBreakdown({
-    investmentAmount: principal,
-    apr,
-    earningTokenPrice,
-    compoundFrequency,
-    performanceFee,
-  })
-  const roiTokens30days = interestBreakdown[2]
-  const roiUSD30days = roiTokens30days * earningTokenPrice
-  const roiPercentage30days = getRoi({
-    amountEarned: roiTokens30days,
-    amountInvested: principal,
-  })
-  expect(roiUSD30days).toBe(expectedROI) // This is correct, trust this
-
-  // Calculate principal based on ROI
-  const principalForExpectedRoi = getPrincipalForInterest(expectedROI, apr, compoundFrequency)
-  const principalUSD = principalForExpectedRoi[2]
-  // in code this is BN but whatever
-  const principalToken = principalUSD / stakingTokenPrice
-  const roiPercentage = getRoi({
-    amountEarned: expectedROI,
-    amountInvested: principalUSD,
-  })
-  expect(principalUSD).toBe(principal)
-})
+it.each`
+  principal   | apr      | earningTokenPrice | compoundFrequency   | performanceFee
+  ${84047.16} | ${68.43} | ${17.12}          | ${1}                | ${0}
+  ${25000}    | ${68.43} | ${17.12}          | ${1}                | ${0}
+  ${25000}    | ${68.43} | ${17.12}          | ${TWICE_PER_DAY}    | ${0}
+  ${25000}    | ${68.43} | ${17.12}          | ${ONCE_PER_7_DAYS}  | ${0}
+  ${30000}    | ${68.43} | ${17.12}          | ${ONCE_PER_30_DAYS} | ${0}
+  ${30000}    | ${68.43} | ${17.12}          | ${1}                | ${2}
+  ${10000}    | ${312.5} | ${1.12}           | ${1}                | ${0}
+  ${10000}    | ${277.2} | ${0.00000012}     | ${1}                | ${0}
+  ${10000}    | ${256.1} | ${0.0012}         | ${1}                | ${0}
+  ${320000}   | ${42.0}  | ${42069.69}       | ${1}                | ${0}
+  ${320000}   | ${35.0}  | ${112000.0}       | ${1}                | ${0}
+  ${70000}    | ${112.9} | ${22.62}          | ${0}                | ${0}
+`(
+  'reverse calculations match for p=$principal, apr=$apr, earningTokenPrice=$earningTokenPrice, compoundFrequency=$compoundFrequency, performanceFee=$performanceFee',
+  ({ principal, apr, earningTokenPrice, compoundFrequency, performanceFee }) => {
+    const DIFFERENCE_THRESHOLD_IN_PERCENTS = 0.00099 // 0.099%
+    // 1. Calculate interests for given parameters
+    const interestBreakdown = getInterestBreakdown({
+      investmentAmount: principal,
+      apr,
+      earningTokenPrice,
+      compoundFrequency,
+      performanceFee,
+    })
+    const interestBreakdownAsUSD = interestBreakdown.map((interest) => interest * earningTokenPrice)
+    // 2. Calculate principal for same parameters and check if it matches the above
+    interestBreakdownAsUSD.forEach((interest: number, index: number) => {
+      const principalBreakdown = getPrincipalForInterest(interest, apr, compoundFrequency, performanceFee)
+      const principalForInvestment = principalBreakdown[index]
+      const difference = Math.abs(principalForInvestment - principal)
+      const differenceAsPercentage = (difference * 1) / principal
+      expect(differenceAsPercentage).toBeLessThanOrEqual(DIFFERENCE_THRESHOLD_IN_PERCENTS)
+    })
+  },
+)

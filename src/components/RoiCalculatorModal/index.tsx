@@ -18,7 +18,7 @@ import { getBalanceNumber } from 'utils/formatBalance'
 import useActiveWeb3React from 'hooks/useActiveWeb3React'
 import RoiCalculatorFooter from './RoiCalculatorFooter'
 import RoiCard from './RoiCard'
-import useRoiCalculatorReducer, { EditingCurrency } from './useRoiCalculatorReducer'
+import useRoiCalculatorReducer, { CalculatorMode, EditingCurrency } from './useRoiCalculatorReducer'
 import AnimatedArrow from './AnimatedArrow'
 
 interface RoiCalculatorModalProps {
@@ -118,6 +118,10 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
     { placement: 'top-end', tooltipOffset: [20, 10] },
   )
 
+  const onBalanceFocus = () => {
+    setCalculatorMode(CalculatorMode.ROI_BASED_ON_PRINCIPAL)
+  }
+
   const editingUnit = editingCurrency === EditingCurrency.TOKEN ? stakingTokenSymbol : 'USD'
   const editingValue = editingCurrency === EditingCurrency.TOKEN ? principalAsToken : principalAsUSD
   const conversionUnit = editingCurrency === EditingCurrency.TOKEN ? 'USD' : stakingTokenSymbol
@@ -140,6 +144,7 @@ const RoiCalculatorModal: React.FC<RoiCalculatorModalProps> = ({
             unit={editingUnit}
             onUserInput={onUserInput}
             switchEditingUnits={toggleEditingCurrency}
+            onFocus={onBalanceFocus}
           />
           <Flex justifyContent="space-between" mt="8px">
             <Button

@@ -115,6 +115,7 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
           <Text bold style={{ display: 'flex', alignItems: 'center' }}>
             {farm.apr ? (
               <>
+                {displayApr}%
                 <ApyButton
                   pid={farm.pid}
                   lpSymbol={farm.lpSymbol}
@@ -125,7 +126,6 @@ const FarmCard: React.FC<FarmCardProps> = ({ farm, displayApr, removed, cakePric
                   apr={farm.apr}
                   displayApr={displayApr}
                 />
-                {displayApr}%
               </>
             ) : (
               <Skeleton height={24} width={80} />

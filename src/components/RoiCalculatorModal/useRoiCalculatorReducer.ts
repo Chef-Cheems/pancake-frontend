@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js'
 import { useEffect, useReducer } from 'react'
-import { BIG_ZERO } from 'utils/bigNumber'
 import { getInterestBreakdown, getPrincipalForInterest, getRoi } from 'utils/compoundApyHelpers'
 
 const compoundingIndexToFrequency = {

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import styled from 'styled-components'
-import { Flex, Box, Text, ExpandableLabel, LinkExternal, Grid, HelpIcon, useTooltip, Button } from '@pancakeswap/uikit'
+import { Flex, Box, Text, ExpandableLabel, LinkExternal, Grid, HelpIcon, useTooltip } from '@pancakeswap/uikit'
 import { useTranslation } from 'contexts/Localization'
 import { getApy } from 'utils/compoundApyHelpers'
 
@@ -69,6 +69,7 @@ const RoiCalculatorFooter: React.FC<RoiCalculatorFooterProps> = ({
   )
 
   const gridRowCount = isFarm ? 4 : 2
+  const apy = (getApy(apr, autoCompoundFrequency > 0 ? autoCompoundFrequency : 1, 365, performanceFee) * 100).toFixed(2)
 
   return (
     <Footer p="16px" flexDirection="column">
@@ -100,7 +101,7 @@ const RoiCalculatorFooter: React.FC<RoiCalculatorFooterProps> = ({
               })}
             </Text>
             <Text small textAlign="right">
-              {getApy(apr, autoCompoundFrequency > 0 ? autoCompoundFrequency : 1, 365, performanceFee)}%
+              {apy}%
             </Text>
             {isFarm && (
               <>
