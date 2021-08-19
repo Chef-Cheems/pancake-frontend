@@ -23,7 +23,7 @@ const StyledPage = styled(Container)`
   }
 `
 
-const PageMeta = () => {
+const PageMeta: React.FC<{ symbol?: string }> = ({ symbol }) => {
   const { t } = useTranslation()
   const { pathname } = useLocation()
   const cakePriceUsd = usePriceCakeBusd()
@@ -36,7 +36,10 @@ const PageMeta = () => {
 
   const pageMeta = getCustomMeta(pathname, t) || {}
   const { title, description, image } = { ...DEFAULT_META, ...pageMeta }
-  const pageTitle = cakePriceUsdDisplay ? [title, cakePriceUsdDisplay].join(' - ') : title
+  let pageTitle = cakePriceUsdDisplay ? [title, cakePriceUsdDisplay].join(' - ') : title
+  if (symbol) {
+    pageTitle = [symbol, title].join(' - ')
+  }
 
   return (
     <Helmet>
@@ -48,10 +51,14 @@ const PageMeta = () => {
   )
 }
 
-const Page: React.FC<React.HTMLAttributes<HTMLDivElement>> = ({ children, ...props }) => {
+interface PageProps extends React.HTMLAttributes<HTMLDivElement> {
+  symbol?: string
+}
+
+const Page: React.FC<PageProps> = ({ children, symbol, ...props }) => {
   return (
     <>
-      <PageMeta />
+      <PageMeta symbol={symbol} />
       <StyledPage {...props}>{children}</StyledPage>
     </>
   )
