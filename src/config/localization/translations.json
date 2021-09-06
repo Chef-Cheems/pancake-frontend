@@ -1438,5 +1438,15 @@
   "Lowest (%symbol%)": "Lowest (%symbol%)",
   "Vol. (%symbol%)": "Vol. (%symbol%)",
   "Profile": "Profile",
-  "Selling": "Selling"
+  "Selling": "Selling",
+  "Lowest price": "Lowest price",
+  "Not for sale": "Not for sale",
+  "For Sale (%num%)": "For Sale (%num%)",
+  "Owner": "Owner",
+  "Contract address": "Contract address",
+  "Token id": "Token id",
+  "Manage Yours": "Manage Yours",
+  "Properties": "Properties",
+  "Bunny id": "Bunny id",
+  "More from this collection": "More from this collection"
 }
