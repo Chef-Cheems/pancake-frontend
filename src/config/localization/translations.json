@@ -1432,5 +1432,9 @@
   "Remove Liquidity": "Remove Liquidity",
   "NFT Collected": "NFT Collected",
   "User profile picture": "User profile picture",
-  "User team banner": "User team banner"
+  "User team banner": "User team banner",
+  "Lowest price": "Lowest price",
+  "Not for sale": "Not for sale",
+  "For Sale (%num%)": "For Sale (%num%)",
+  "Owner": "Owner"
 }

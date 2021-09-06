@@ -53,6 +53,7 @@ const NftMarket = lazy(() => import('./views/Nft/market'))
 const NftProfile = lazy(() => import('./views/Nft/market/Profile'))
 const Collectible = lazy(() => import('./views/Nft/market/Collectible'))
 const CollectibleOverview = lazy(() => import('./views/Nft/market/Collectibles'))
+const IndividualNFTPage = lazy(() => import('views/Nft/IndividualNFTPage'))
 
 // This config is required for number formatting
 BigNumber.config({
@@ -126,6 +127,9 @@ const App: React.FC = () => {
             {/* NFT */}
             <Route exact path="/nft/market/collectibles">
               <CollectibleOverview />
+            </Route>
+            <Route exact path="/nft/market/item/:id">
+              <IndividualNFTPage />
             </Route>
             <Route path="/nft/market/collectibles/:name">
               <Collectible />
