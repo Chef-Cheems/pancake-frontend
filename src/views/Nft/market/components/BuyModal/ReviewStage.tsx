@@ -31,12 +31,12 @@ const ReviewStage: React.FC<ReviewStageProps> = ({
     <>
       <Flex px="24px" pt="24px" flexDirection="column">
         <Flex>
-          <Image src={nftToBuy.token.imageUrl} height={68} width={68} mr="16px" />
+          <Image src={nftToBuy.image.thumbnail} height={68} width={68} mr="16px" />
           <Flex flexDirection="column" justifyContent="space-evenly">
             <Text color="textSubtle" fontSize="12px">
               {nftToBuy.collection.name}
             </Text>
-            <Text bold>{nftToBuy.token.name}</Text>
+            <Text bold>{nftToBuy.name}</Text>
           </Flex>
         </Flex>
         <BorderedBox>

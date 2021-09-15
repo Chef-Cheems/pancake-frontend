@@ -33,7 +33,7 @@ const BuyModal: React.FC<BuyModalProps> = ({ nftToBuy, onDismiss }) => {
   const wbnbContract = useWETHContract()
   const nftMarketContract = useNftMarketContract()
 
-  const nftPriceWei = parseUnits('0.01', 'ether')
+  const nftPriceWei = parseUnits(nftToBuy.token.currentAskPrice, 'ether')
   const nftPrice = parseFloat(formatBigNumberToFixed(nftPriceWei, 3))
 
   // BNB
@@ -68,19 +68,22 @@ const BuyModal: React.FC<BuyModalProps> = ({ nftToBuy, onDismiss }) => {
         console.info('Approve success', receipt)
       },
       onConfirm: () => {
-        const payAmount = Number.isNaN(nftPrice) ? ethers.BigNumber.from(0) : parseUnits(nftPrice.toString())
+        const payAmount = Number.isNaN(nftToBuy.token.currentAskPrice)
+          ? ethers.BigNumber.from(0)
+          : parseUnits(nftToBuy.token.currentAskPrice)
         if (paymentCurrency === PaymentCurrency.BNB) {
           return callWithGasPrice(
             nftMarketContract,
             'buyTokenUsingBNB',
-            [nftToBuy.collection.address, nftToBuy.token.id],
+            [nftToBuy.collection.address, nftToBuy.token.tokenId],
             { value: payAmount },
           )
         }
+        console.log('paying with WBNB')
         return callWithGasPrice(nftMarketContract, 'buyTokenUsingWBNB', [
           nftToBuy.collection.address,
-          nftToBuy.token.id,
-          payAmount,
+          nftToBuy.token.tokenId,
+          nftToBuy.token.currentAskPrice,
         ])
       },
       onSuccess: async ({ receipt }) => {

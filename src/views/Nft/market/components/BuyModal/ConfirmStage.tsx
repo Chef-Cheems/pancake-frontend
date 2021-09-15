@@ -10,7 +10,7 @@ interface ConfirmStageProps {
 
 // Shown in case user wants to pay with BNB
 // or if user wants to pay with WBNB and it is already approved
-const ConfirmStage: React.FC<ConfirmStageProps> = ({ isConfirmed, isConfirming }) => {
+const ConfirmStage: React.FC<ConfirmStageProps> = ({ isConfirmed, isConfirming, handleConfirm }) => {
   const { t } = useTranslation()
   console.debug('Confirmed', isConfirmed)
   return (
@@ -23,7 +23,7 @@ const ConfirmStage: React.FC<ConfirmStageProps> = ({ isConfirmed, isConfirming }
       <Text small color="textSubtle">
         {t('Please confirm the transaction in your wallet')}
       </Text>
-      <Button disabled={isConfirming} variant="secondary">
+      <Button disabled={isConfirming} onClick={handleConfirm} variant="secondary">
         {t('Confirm')}
       </Button>
     </Flex>
