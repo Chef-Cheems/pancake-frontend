@@ -84,6 +84,8 @@ export const fetchNftsFromCollections = createAsyncThunk<NFT[], string>(
       {},
     )
 
+    console.log(nfts, nftsMarketObj)
+
     return mapValues(nfts, (nft, key) => {
       return {
         id: key,

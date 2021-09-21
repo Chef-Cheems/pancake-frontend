@@ -1,7 +1,10 @@
 import React from 'react'
 import styled from 'styled-components'
+import { useParams } from 'react-router-dom'
 import { Flex } from '@pancakeswap/uikit'
 import Page from 'components/Layout/Page'
+import { useNftsFromCollection } from 'state/nftMarket/hooks'
+import { isAddress } from 'utils'
 import MainNFTCard from './MainNFTCard'
 import ManageCard from './ManageCard'
 import PropertiesCard from './PropertiesCard'
@@ -23,9 +26,13 @@ const TwoColumnsContainer = styled(Flex)`
 `
 
 const IndividualNFTPage = () => {
+  const { collectionAddress, bunnyOrTokenId } = useParams<{ collectionAddress: string; bunnyOrTokenId: string }>()
+  const checksummedCollectionAddress = isAddress(collectionAddress) || ''
+  const allNfts = useNftsFromCollection(checksummedCollectionAddress)
+  const bunnyIdNft = allNfts ? allNfts[bunnyOrTokenId] : null
   return (
     <Page>
-      <MainNFTCard collectible={twinkleForSale} />
+      {/* <MainNFTCard nft={bunnyIdNft} /> */}
       <TwoColumnsContainer flexDirection={['column', 'column', 'row']}>
         <Flex flexDirection="column" width="100%">
           <ManageCard userCollectibles={userCollectibles} />

@@ -16,7 +16,7 @@ const Collection = () => {
       <Route exact path={`${path}/traits`}>
         <Traits />
       </Route>
-      <Route path={`${path}/:tokenId`}>
+      <Route path={`${path}/:bunnyOrTokenId`}>
         <IndividualNFTPage />
       </Route>
     </Switch>
