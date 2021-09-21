@@ -1,8 +1,9 @@
 import { CardProps } from '@pancakeswap/uikit'
-import { NFT, NftLocation } from 'state/nftMarket/types'
+import { PancakeBunnyNftWithTokens, NftLocation } from 'state/nftMarket/types'
 
 export interface CollectibleCardProps extends CardProps {
-  nft: NFT
+  nft: PancakeBunnyNftWithTokens
+  lowestPrice: number
   nftLocation?: NftLocation
   currentAskPrice?: number
 }

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, CardBody, Flex, Text } from '@pancakeswap/uikit'
-import minBy from 'lodash/minBy'
 import { useTranslation } from 'contexts/Localization'
 import { useBNBBusdPrice } from 'hooks/useBUSDPrice'
 import PreviewImage from './PreviewImage'
@@ -8,13 +7,10 @@ import { CostLabel, MetaRow } from './styles'
 import LocationTag from './LocationTag'
 import { CollectibleCardProps } from './types'
 
-const CollectibleCardBody: React.FC<CollectibleCardProps> = ({ nft, nftLocation, currentAskPrice }) => {
+const CollectibleCardBody: React.FC<CollectibleCardProps> = ({ nft, nftLocation, currentAskPrice, lowestPrice }) => {
   const { t } = useTranslation()
-  const { name, image, tokens } = nft
+  const { name, image } = nft
   const bnbBusdPrice = useBNBBusdPrice()
-
-  const lowestPriceToken = tokens && minBy(Object.values(tokens), 'currentAskPrice')
-  const lowestPriceNum = lowestPriceToken ? parseFloat(lowestPriceToken.currentAskPrice) : 0
 
   return (
     <CardBody p="8px">
@@ -30,11 +26,11 @@ const CollectibleCardBody: React.FC<CollectibleCardProps> = ({ nft, nftLocation,
       <Text as="h4" fontWeight="600" mb="8px">
         {name}
       </Text>
-      {(lowestPriceToken || currentAskPrice) && (
+      {(lowestPrice || currentAskPrice) && (
         <Box borderTop="1px solid" borderTopColor="cardBorder" pt="8px">
-          {lowestPriceToken && (
+          {lowestPrice && (
             <MetaRow title={t('Lowest price')}>
-              <CostLabel cost={lowestPriceNum} bnbBusdPrice={bnbBusdPrice} />
+              <CostLabel cost={lowestPrice} bnbBusdPrice={bnbBusdPrice} />
             </MetaRow>
           )}
           {currentAskPrice && (
