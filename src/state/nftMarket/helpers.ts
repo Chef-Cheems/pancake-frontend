@@ -98,8 +98,8 @@ export const getNftsFromDifferentCollectionsApi = async (
 ): Promise<NftToken[]> => {
   const promises = from.map((nft) => getNftApi(nft.collectionAddress, nft.tokenId))
   const responses = await Promise.all(promises)
-  // Sometimes API can't find some tokens
-  // at least returned the ones that returned successfully
+  // Sometimes API can't find some tokens (e.g. 404 response)
+  // at least return the ones that returned successfully
   return responses
     .filter((resp) => resp)
     .map((res, index) => ({
@@ -463,7 +463,6 @@ export const combineNftMarketAndMetadata = (
     } else {
       marketData = walletNfts.find((marketNft) => marketNft.tokenId === nft.tokenId)
     }
-    // Get location
     const location = getNftLocationForMarketNft(nft.tokenId, tokenIdsInWallet, tokenIdsForSale, profileNftId)
     return { ...nft, marketData, location }
   })
