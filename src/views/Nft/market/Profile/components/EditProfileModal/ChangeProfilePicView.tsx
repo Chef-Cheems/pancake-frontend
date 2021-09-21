@@ -33,7 +33,6 @@ const ChangeProfilePicPage: React.FC<ChangeProfilePicPageProps> = ({ onDismiss }
   const { toastSuccess } = useToast()
   const { callWithGasPrice } = useCallWithGasPrice()
 
-  // currently will show just 1 instance of Hiccup if you have many
   const nftsInWallet = nfts.filter((nft) => nft.location === NftLocation.WALLET)
 
   const { isApproving, isApproved, isConfirmed, isConfirming, handleApprove, handleConfirm } =
