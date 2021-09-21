@@ -22,6 +22,11 @@ export const useGetCollections = () => {
   return useSelector((state: State) => state.nftMarket.data.collections)
 }
 
+export const useCollectionByAddress = (address: string) => {
+  const collections = useGetCollections()
+  return find(collections, (collection) => collection.address.toLowerCase() === address.toLowerCase())
+}
+
 export const useCollectionFromSlug = (slug: string) => {
   const collections = useGetCollections()
   return find(collections, (collection) => slugify(collection.name) === slug)

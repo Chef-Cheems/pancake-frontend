@@ -83,7 +83,12 @@ const MintedTableRows: React.FC<ForSaleTableRowsProps> = ({ collectiblesForSale 
   return (
     <OwnersTableRow>
       {collectiblesForSale.map((collectibleAndOwnerData) => (
-        <Row t={t} collectibleForSale={collectibleAndOwnerData} bnbBusdPrice={bnbBusdPrice} />
+        <Row
+          key={collectibleAndOwnerData.collectible.nft.id}
+          t={t}
+          collectibleForSale={collectibleAndOwnerData}
+          bnbBusdPrice={bnbBusdPrice}
+        />
       ))}
     </OwnersTableRow>
   )

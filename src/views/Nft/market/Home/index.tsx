@@ -25,7 +25,9 @@ const Home = () => {
         <Link to={`${nftsBaseUrl}/buy-sell-demo`}>Buy and Sell demo</Link>
         <br />
         <Box mb="40px">
-          <Link to={`${nftsBaseUrl}/item/7`}>Individual NFT page</Link>
+          <Link to={`${nftsBaseUrl}/collections/0x60935f36e4631f73f0f407e68642144e07ac7f5e/20`}>
+            Individual NFT page (Baller)
+          </Link>
         </Box>
         <Flex alignItems="center" justifyContent="space-between" mb="32px">
           <Heading as="h3" scale="lg">

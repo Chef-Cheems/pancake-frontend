@@ -51,7 +51,7 @@ const MoreFromThisCollection: React.FC = () => {
         <StyledSwiper>
           <Swiper spaceBetween={16} slidesPerView={1.5}>
             {Object.values(nftList).map((bunny) => (
-              <SwiperSlide>
+              <SwiperSlide key={bunny.id}>
                 <CollectibleCard nft={bunny} />
               </SwiperSlide>
             ))}
@@ -69,7 +69,7 @@ const MoreFromThisCollection: React.FC = () => {
             }}
           >
             {Object.values(nftList).map((bunny) => (
-              <SwiperSlide>
+              <SwiperSlide key={bunny.id}>
                 <CollectibleCard nft={bunny} />
               </SwiperSlide>
             ))}

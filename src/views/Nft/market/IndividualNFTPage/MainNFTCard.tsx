@@ -4,7 +4,7 @@ import { Flex, Box, Card, CardBody, Text, Button, Image, BinanceIcon } from '@pa
 import { useTranslation } from 'contexts/Localization'
 import { multiplyPriceByAmount } from 'utils/prices'
 import { useBNBBusdPrice } from 'hooks/useBUSDPrice'
-import { Collectible } from './types'
+import { NFT } from 'state/nftMarket/types'
 
 const RoundedImage = styled(Image)`
   height: max-content;
@@ -20,13 +20,14 @@ const Container = styled(Flex)`
 `
 
 interface MainNFTCardProps {
-  collectible: Collectible
+  nft: NFT
+  lowestCost: string
 }
 
-const MainNFTCard: React.FC<MainNFTCardProps> = ({ collectible }) => {
+const MainNFTCard: React.FC<MainNFTCardProps> = ({ nft, lowestCost }) => {
   const { t } = useTranslation()
   const bnbBusdPrice = useBNBBusdPrice()
-  const priceInUsd = multiplyPriceByAmount(bnbBusdPrice, collectible.lowestCost)
+  const priceInUsd = multiplyPriceByAmount(bnbBusdPrice, parseFloat(lowestCost))
   return (
     <Card mb="40px">
       <CardBody>
@@ -34,19 +35,19 @@ const MainNFTCard: React.FC<MainNFTCardProps> = ({ collectible }) => {
           <Flex flex="2">
             <Box>
               <Text bold color="primary" mt={['16px', '16px', '50px']}>
-                {collectible.name}
+                {nft.collectionName}
               </Text>
               <Text fontSize="40px" bold mt="12px">
-                {collectible.nft.name}
+                {nft.name}
               </Text>
-              <Text mt={['16px', '16px', '48px']}>{t(collectible.nft.description)}</Text>
+              <Text mt={['16px', '16px', '48px']}>{t(nft.description)}</Text>
               <Text color="textSubtle" mt={['16px', '16px', '48px']}>
                 {t('Lowest price')}
               </Text>
               <Flex alignItems="center" mt="8px">
                 <BinanceIcon width={18} height={18} mr="4px" />
                 <Text fontSize="24px" bold mr="4px">
-                  {collectible.lowestCost}
+                  {lowestCost}
                 </Text>
                 <Text color="textSubtle">{`(~${priceInUsd.toLocaleString(undefined, {
                   minimumFractionDigits: 2,
@@ -59,7 +60,7 @@ const MainNFTCard: React.FC<MainNFTCardProps> = ({ collectible }) => {
             </Box>
           </Flex>
           <Flex flex="2" justifyContent={['center', null, 'flex-end']} alignItems="center">
-            <RoundedImage src={collectible.nft.images.ipfs} width={440} height={440} />
+            <RoundedImage src={nft.image.thumbnail} width={440} height={440} />
           </Flex>
         </Container>
       </CardBody>
