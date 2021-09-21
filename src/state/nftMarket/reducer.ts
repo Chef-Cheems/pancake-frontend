@@ -92,7 +92,6 @@ export const fetchNftsFromCollections = createAsyncThunk<Record<string, PancakeB
         collectionName: nft.collection.name,
         collectionAddress,
         image: nft.image,
-        updatedAt: 'TODO',
         tokens: nft.tokens.reduce((accum: Record<number, TokenMarketData>, tokenId: number) => {
           const token = nftsMarketObj[tokenId]
           return { ...accum, [tokenId]: token }
