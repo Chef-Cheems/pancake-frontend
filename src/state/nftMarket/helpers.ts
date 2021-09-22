@@ -393,7 +393,6 @@ export const combineCollectionData = (
     const collection: Collection = {
       ...current,
       ...collectionMarket,
-      slug: slugify(current.name),
     }
 
     return {

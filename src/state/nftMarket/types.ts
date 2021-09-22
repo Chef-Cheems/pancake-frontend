@@ -143,7 +143,6 @@ export interface Collection {
   address: string
   name: string
   description?: string
-  slug: string
   symbol: string
   active: boolean
   totalVolumeBNB: BigNumberish
