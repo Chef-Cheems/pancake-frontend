@@ -81,16 +81,6 @@ const CollectionNfts: React.FC<CollectionNftsProps> = ({ collection, sortBy = 'u
   nftsToShow = orderBy(nftsToShow, (nft) => (isPBCollection ? nft.meta[sortBy] : Number(nft.marketData[sortBy])), [
     sortBy === 'currentAskPrice' ? 'asc' : 'desc',
   ])
-  // if (checksummedAddress === pancakeBunniesAddress) {
-  //   // PancakeBunnies should display 1 card per bunny id
-  //   nftsToShow = nftsToShow.reduce((nftArray, current) => {
-  //     const bunnyId = current.attributes[0].value
-  //     if (!nftArray.find((nft) => nft.attributes[0].value === bunnyId)) {
-  //       nftArray.push(current)
-  //     }
-  //     return nftArray
-  //   }, [])
-  // }
 
   return (
     <Grid
