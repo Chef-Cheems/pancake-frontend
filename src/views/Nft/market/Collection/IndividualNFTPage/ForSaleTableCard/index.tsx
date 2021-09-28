@@ -92,34 +92,42 @@ const ForSaleTableCard: React.FC<ForSaleTableCardProps> = ({ nftsForSale, totalF
         <SellIcon width="24px" height="24px" />
         <Text bold>{t('For Sale (%num%)', { num: totalForSale.toLocaleString() })}</Text>
       </Grid>
-      <TableHeading flex="0 1 auto" gridTemplateColumns="2fr 2fr 1fr" py="12px">
-        <Text textTransform="uppercase" color="textSubtle" bold fontSize="12px" px="24px">
-          {t('Price')}
-        </Text>
-        <Text textTransform="uppercase" color="textSubtle" bold fontSize="12px">
-          {t('Owner')}
-        </Text>
-      </TableHeading>
-      <Flex flex="1 1 auto" flexDirection="column" justifyContent="space-between" height="100%">
-        <ForSaleTableRows nftsForSale={displayedCollectibles} />
-        <PageButtons>
-          <Arrow
-            onClick={() => {
-              switchPage(page === 1 ? page : page - 1)
-            }}
-          >
-            <ArrowBackIcon color={page === 1 ? 'textDisabled' : 'primary'} />
-          </Arrow>
-          <Text>{t('Page %page% of %maxPage%', { page, maxPage })}</Text>
-          <Arrow
-            onClick={() => {
-              switchPage(page === maxPage ? page : page + 1)
-            }}
-          >
-            <ArrowForwardIcon color={page === maxPage ? 'textDisabled' : 'primary'} />
-          </Arrow>
-        </PageButtons>
-      </Flex>
+      {displayedCollectibles.length > 0 ? (
+        <>
+          <TableHeading flex="0 1 auto" gridTemplateColumns="2fr 2fr 1fr" py="12px">
+            <Text textTransform="uppercase" color="textSubtle" bold fontSize="12px" px="24px">
+              {t('Price')}
+            </Text>
+            <Text textTransform="uppercase" color="textSubtle" bold fontSize="12px">
+              {t('Owner')}
+            </Text>
+          </TableHeading>
+          <Flex flex="1 1 auto" flexDirection="column" justifyContent="space-between" height="100%">
+            <ForSaleTableRows nftsForSale={displayedCollectibles} />
+            <PageButtons>
+              <Arrow
+                onClick={() => {
+                  switchPage(page === 1 ? page : page - 1)
+                }}
+              >
+                <ArrowBackIcon color={page === 1 ? 'textDisabled' : 'primary'} />
+              </Arrow>
+              <Text>{t('Page %page% of %maxPage%', { page, maxPage })}</Text>
+              <Arrow
+                onClick={() => {
+                  switchPage(page === maxPage ? page : page + 1)
+                }}
+              >
+                <ArrowForwardIcon color={page === maxPage ? 'textDisabled' : 'primary'} />
+              </Arrow>
+            </PageButtons>
+          </Flex>
+        </>
+      ) : (
+        <Flex justifyContent="center" alignItems="center" height="200px">
+          <Text>{t('No items for sale')}</Text>
+        </Flex>
+      )}
     </StyledCard>
   )
 }
