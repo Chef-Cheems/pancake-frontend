@@ -1762,5 +1762,7 @@
   "Get %symbol%, or make sure your tokens aren’t staked somewhere else.": "Get %symbol%, or make sure your tokens aren’t staked somewhere else.",
   "Refresh": "Refresh",
   "Basic": "Basic",
-  "Tradingview chart not available": "Tradingview chart not available"
+  "Tradingview chart not available": "Tradingview chart not available",
+  "Limit": "Limit",
+  "Place a limit order to trade at a set price": "Place a limit order to trade at a set price"
 }
