@@ -21,7 +21,7 @@ import FarmAuctionsBanner from './components/Banners/FarmAuctionsBanner'
 const showBanner = false
 
 // eslint-disable-next-line no-console
-console.log('Vercel test thingy 3')
+console.log('lolkek')
 
 const HomeBanner = ({ account }: { account: string }) => {
   if (!showBanner) {
