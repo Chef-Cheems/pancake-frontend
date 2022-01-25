@@ -20,6 +20,9 @@ import FarmAuctionsBanner from './components/Banners/FarmAuctionsBanner'
 
 const showBanner = false
 
+// eslint-disable-next-line no-console
+console.log('I am develop branch')
+
 const HomeBanner = ({ account }: { account: string }) => {
   if (!showBanner) {
     return null
